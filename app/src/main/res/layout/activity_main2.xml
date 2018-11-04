@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Main2Activity">
+
+    <Button
+        android:id="@+id/login_btn"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="97dp"
+        android:background="@drawable/reg_btn_style"
+        android:text="Login"
+        android:textColor="#ffffff"
+        tools:layout_editor_absoluteX="112dp"
+        tools:layout_editor_absoluteY="332dp" />
+
+    <Button
+        android:id="@+id/reg_btn"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="44dp"
+        android:background="@drawable/sign_up_style"
+        android:text="Sign Up"
+        android:textColor="@color/colorPrimary"
+        tools:layout_editor_absoluteX="112dp"
+        tools:layout_editor_absoluteY="380dp" />
+
+
+</RelativeLayout>
