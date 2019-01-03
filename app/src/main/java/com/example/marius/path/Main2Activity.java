@@ -7,10 +7,9 @@ import android.view.View;
 import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class Main2Activity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
+    private FirebaseAuth auth;
     FirebaseAuth.AuthStateListener mAuthListener;
 
     private Button reg_btn;
@@ -21,8 +20,13 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        mAuth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
 
+        if(auth.getCurrentUser() != null){
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        }
+        /*
         mAuthListener = new FirebaseAuth.AuthStateListener(){
             @Override
             public  void  onAuthStateChanged(FirebaseAuth firebaseAuth){
@@ -33,7 +37,8 @@ public class Main2Activity extends AppCompatActivity {
                     finish();
                 }
             }
-        };
+        };*/
+
 
         reg_btn = (Button) findViewById(R.id.reg_btn);
         reg_btn.setOnClickListener(new View.OnClickListener(){

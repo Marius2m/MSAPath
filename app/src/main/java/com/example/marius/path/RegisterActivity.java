@@ -21,14 +21,14 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText regName, regMail, regPassword, regPassword2;
     private Button regBtn;
     private ProgressBar progressBar;
-    private FirebaseAuth mAuth;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mAuth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         regName = (EditText) findViewById(R.id.regName);
         regMail = (EditText) findViewById(R.id.regMail);
@@ -90,12 +90,14 @@ public class RegisterActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 progressBar.setVisibility(View.GONE);
 
                 if(task.isSuccessful()){
+
+
                     Intent intent = new Intent(RegisterActivity.this, ProfileActivity.class);
                     //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     //finish();
