@@ -11,16 +11,24 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.marius.path.user_data.UserAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseAuth auth;
+//    private FirebaseDatabase database;
+//    private DatabaseReference databaseReference;
+
     Button login_btn;
     EditText userEmail, userPassword;
     ProgressBar progressBar;
+//    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +36,9 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_log_in);
 
         auth = FirebaseAuth.getInstance();
+//        database = FirebaseDatabase.getInstance();
+//        databaseReference = database.getReference();
+
 
         findViewById(R.id.login_btn).setOnClickListener(this);
 
