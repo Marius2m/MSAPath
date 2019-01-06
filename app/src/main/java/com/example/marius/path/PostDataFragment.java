@@ -1,5 +1,6 @@
 package com.example.marius.path;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,9 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.marius.path.user_data.PostData;
+
+import org.w3c.dom.Text;
 
 
 public class PostDataFragment extends Fragment {
@@ -68,7 +75,40 @@ public class PostDataFragment extends Fragment {
                 textLayout.startAnimation(hideLayout);
                 fab.startAnimation(hideBtn);
 
-                
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                View mView = getLayoutInflater().inflate(R.layout.dialog_post_text, null);
+
+                final EditText paragraphText = (EditText) mView.findViewById(R.id.editParagraphText);
+                Button cancelBtn = (Button) mView.findViewById(R.id.cancelBtn);
+                Button postBtn = (Button) mView.findViewById(R.id.postBtn);
+
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+
+                postBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!paragraphText.getText().toString().isEmpty()){
+                            Log.d("Dialog: text is: ", paragraphText.getText().toString());
+                            Toast.makeText(getActivity(), paragraphText.getText().toString(), Toast.LENGTH_SHORT).show();
+                           // createNewTextView(paragraphText.getText().toString(), alignment, margin, padding);
+                            dialog.dismiss();
+                        }else{
+                            Toast.makeText(getActivity(), "Empty", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                cancelBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
                 Log.d("InsideText", "TEXT");
             }
         });
@@ -93,4 +133,10 @@ public class PostDataFragment extends Fragment {
 
         return v;
     }
+
+//    TextView createNewTextView(String text, int alignment, int margin, int padding){
+//        TextView newDynamicTextView = new TextView(getContext());
+//
+//
+//    }
 }

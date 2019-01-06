@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/newParagraph"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="26sp"
+        android:layout_marginTop="6dp"
+        android:text="@string/new_paragraph" />
+
+    <EditText
+        android:id="@+id/editParagraphText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:gravity="top|left"
+        android:hint="@string/new_paragraph_text"
+        android:inputType="textMultiLine"
+        android:lines="8"
+        android:minLines="6"
+        android:backgroundTint="#3F51B5"
+        android:textColorLink="@color/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <Button
+            android:id="@+id/cancelBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/reg_btn_style"
+            android:text="Cancel"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/postBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/reg_btn_style"
+            android:text="Post"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+
+</LinearLayout>
