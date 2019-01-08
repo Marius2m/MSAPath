@@ -1,16 +1,21 @@
 package com.example.marius.path;
 
 import android.app.AlertDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -40,11 +45,14 @@ public class PostDataFragment extends Fragment {
     private CoordinatorLayout coordinatorLayout;
 
     private Button doneBtn;
+    private Button cancelBtn;
 
     private int currentId = 0;
     private int lineIndex = 0;
 
     public PostData postData;
+
+    final Handler handler = new Handler();
 
     @Nullable
     @Override
@@ -59,6 +67,7 @@ public class PostDataFragment extends Fragment {
         currentId = test.getId();
 
         doneBtn = (Button) v.findViewById(R.id.done_btn);
+        cancelBtn = (Button) v.findViewById(R.id.cancel_btn);
 
         Log.d("currentId test", ""+currentId);
         final FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fabtn);
@@ -116,6 +125,8 @@ public class PostDataFragment extends Fragment {
 
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
+                //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
@@ -174,7 +185,14 @@ public class PostDataFragment extends Fragment {
                             public void onSuccess(Void aVoid) {
                                 //mDatabase.child("users").child(userKey).child("postsId").setValue(postKey);
 
-                                Toast.makeText(getActivity(), "posted data to fb", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Post created!", Toast.LENGTH_SHORT).show();
+
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
+                                        fragmentT.replace(R.id.fragment_container, new AddFragment()).commit();                                    }
+                                }, 2000);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -184,6 +202,40 @@ public class PostDataFragment extends Fragment {
                             }
                         });
 
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                View mView = getLayoutInflater().inflate(R.layout.dialog_discard_post_text, null);
+
+                Button discardBtn = (Button) mView.findViewById(R.id.discardBtn);
+                Button keepBtn = (Button) mView.findViewById(R.id.keepBtn);
+                builder.setView(mView);
+
+                final AlertDialog dialog = builder.create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+
+                keepBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                discardBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
+                        fragmentT.replace(R.id.fragment_container, new AddFragment()).commit();
+                    }
+                });
             }
         });
 

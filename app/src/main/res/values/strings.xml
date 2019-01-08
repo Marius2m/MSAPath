@@ -5,4 +5,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="new_paragraph">New Paragraph</string>
     <string name="new_paragraph_text">Write something, don\'t be shy!</string>
+    <string name="discard_path_text">Are you sure you want to discard this path?</string>
 </resources>
