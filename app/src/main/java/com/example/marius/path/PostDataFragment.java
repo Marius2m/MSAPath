@@ -2,6 +2,7 @@ package com.example.marius.path;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -20,28 +21,44 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marius.path.user_data.ParagraphContent;
 import com.example.marius.path.user_data.PostData;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class PostDataFragment extends Fragment {
+    private DatabaseReference mDatabase;
+
     private ScrollView scrollView;
     private TextView test;
     private RelativeLayout parentRLayout;
     private CoordinatorLayout coordinatorLayout;
 
+    private Button doneBtn;
+
     private int currentId = 0;
     private int lineIndex = 0;
+
+    public PostData postData;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_post_data, container, false);
 
-        //scrollView = (ScrollView) v.findViewById(R.id.scrollViewId);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         parentRLayout = (RelativeLayout) v.findViewById(R.id.relativeLayoutId);
         coordinatorLayout = (CoordinatorLayout) v.findViewById(R.id.coordinatorLayoutId);
         test = (TextView) v.findViewById(R.id.row0);
         currentId = test.getId();
+
+        doneBtn = (Button) v.findViewById(R.id.done_btn);
 
         Log.d("currentId test", ""+currentId);
         final FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fabtn);
@@ -111,7 +128,7 @@ public class PostDataFragment extends Fragment {
                            // Toast.makeText(getActivity(), paragraphText.getText().toString(), Toast.LENGTH_SHORT).show();
 
 
-                            parentRLayout.addView(createNewTextView(paragraphText.getText().toString(), 0, 5, 5));
+                            parentRLayout.addView(createNewTextView(paragraphText.getText().toString(), 0, 10, 20));
                             dialog.dismiss();
                         }else{
                             Toast.makeText(getActivity(), "Empty", Toast.LENGTH_SHORT).show();
@@ -142,8 +159,35 @@ public class PostDataFragment extends Fragment {
             }
         });
 
+        doneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                String userKey = firebaseUser.getUid();
+                Log.d("userKey", userKey);
+
+                postData.printContent();
+                mDatabase.child("posts").child(userKey).push().setValue(postData)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                
+
+                                Toast.makeText(getActivity(), "posted data to fb", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getActivity(), "failed to post data to fb", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+            }
+        });
+
         Bundle b = getArguments();
-        PostData postData = (PostData) getArguments().getSerializable("PostData");
+        postData = (PostData) getArguments().getSerializable("PostData");
         Log.i("getPostData",postData.toString());
 
         return v;
@@ -159,6 +203,7 @@ public class PostDataFragment extends Fragment {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
         );
+        layoutParams.setMargins(margin, 0, margin, 2*margin);
         layoutParams.addRule(RelativeLayout.BELOW, currentId);
         newDynamicTextView.setLayoutParams(layoutParams);
 
@@ -167,8 +212,12 @@ public class PostDataFragment extends Fragment {
         currentId = newDynamicTextView.getId();
         Log.d("currentId", ""+currentId);
         newDynamicTextView.setText(text);
+        newDynamicTextView.setPadding(padding,0, padding, padding);
+
+        postData.addPostContent(new ParagraphContent(text));
 
         Log.d("newDynamic:", newDynamicTextView.getText().toString());
         return newDynamicTextView;
     }
+
 }

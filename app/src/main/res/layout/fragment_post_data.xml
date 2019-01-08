@@ -9,7 +9,59 @@
     android:fillViewport="true"
     tools:context=".PostDataFragment">
 
+    <LinearLayout
+        android:id="@+id/linearTopLayout"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal"
+        app:layout_anchor="@+id/coordinatorLayoutId"
+        app:layout_anchorGravity="top|center"
+        android:paddingTop="5dp"
+        android:background="#fff"
+        >
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/cancel_btn"
+            android:layout_width="0dp"
+            android:layout_marginRight="45dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textSize="20dp"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            />
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/row1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="New Path"
+            android:textAlignment="center"
+            android:textColor="#000"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/done_btn"
+            android:layout_width="0dp"
+            android:layout_marginLeft="55dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:color="#00ffffff"
+            android:textSize="20dp"
+            android:text="Done"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary" />
+    </LinearLayout>
+
     <ScrollView
+        android:layout_marginTop="55dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scrollViewId"
@@ -25,7 +77,8 @@
             android:id="@+id/row0"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="TextView" />
+            android:text="TextView"
+            />
     </RelativeLayout>
     </ScrollView>
     <android.support.design.widget.CoordinatorLayout

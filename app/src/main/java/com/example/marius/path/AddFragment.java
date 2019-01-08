@@ -15,6 +15,10 @@ import android.widget.Toast;
 
 import com.example.marius.path.user_data.PostData;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class AddFragment extends Fragment {
     private EditText postTitle, postLocation, postNrOfTravelers;
     private TextView postDate;
@@ -81,7 +85,10 @@ public class AddFragment extends Fragment {
                 location="location";
                 nrTravelers="5";
 
-                postData = new PostData(title, location,"1 Jun 2018" ,nrTravelers);
+                DateFormat dateF = new SimpleDateFormat("d MMM yyyy");
+                String creationDate = dateF.format(Calendar.getInstance().getTime());
+
+                postData = new PostData(title, location,"1 Jun 2018" , nrTravelers, creationDate);
                 Log.d("addFragmentData", title + " " + location + " " + date + " " + nrTravelers);
 
                 Bundle bundleArgs = new Bundle();
