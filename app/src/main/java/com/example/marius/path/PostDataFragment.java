@@ -163,15 +163,16 @@ public class PostDataFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                String userKey = firebaseUser.getUid();
+                final String userKey = firebaseUser.getUid();
                 Log.d("userKey", userKey);
 
                 postData.printContent();
-                mDatabase.child("posts").child(userKey).push().setValue(postData)
+                final String postKey = mDatabase.child("posts").child(userKey).push().getKey();
+                mDatabase.child("posts").child(userKey).child(postKey).setValue(postData)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                
+                                //mDatabase.child("users").child(userKey).child("postsId").setValue(postKey);
 
                                 Toast.makeText(getActivity(), "posted data to fb", Toast.LENGTH_SHORT).show();
                             }
@@ -179,7 +180,7 @@ public class PostDataFragment extends Fragment {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getActivity(), "failed to post data to fb", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Failed to post data. Make sure you have mobile data turned on!", Toast.LENGTH_SHORT).show();
                             }
                         });
 
