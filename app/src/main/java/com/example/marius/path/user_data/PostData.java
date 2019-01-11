@@ -9,6 +9,7 @@ public class PostData implements Serializable{
     public String title, location, travelDate, nrTravelers, creationDate;
     public String postText;
 
+
     public ArrayList<PostContent> contents = new ArrayList<PostContent>();
 
     public PostData(String title, String location, String date, String nrTravelers, String creationDate) {
