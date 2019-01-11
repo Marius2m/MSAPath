@@ -178,8 +178,8 @@ public class PostDataFragment extends Fragment {
                 Log.d("userKey", userKey);
 
                 postData.printContent();
-                final String postKey = mDatabase.child("posts").child(userKey).push().getKey();
-                mDatabase.child("posts").child(userKey).child(postKey).setValue(postData)
+                final String postKey = mDatabase.child("posts").push().getKey();
+                mDatabase.child("posts").child(postKey).setValue(postData)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {

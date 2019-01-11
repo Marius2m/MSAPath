@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marius.path.user_data.PostData;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -85,10 +87,15 @@ public class AddFragment extends Fragment {
                 location="location";
                 nrTravelers="5";
 
-                DateFormat dateF = new SimpleDateFormat("d MMM yyyy");
-                String creationDate = dateF.format(Calendar.getInstance().getTime());
+//                DateFormat dateF = new SimpleDateFormat("d MMM yyyy");
+//                String creationDate = dateF.format(Calendar.getInstance().getTime());
 
-                postData = new PostData(title, location,"1 Jun 2018" , nrTravelers, creationDate);
+                Long creationDate = System.currentTimeMillis() / 1000;
+
+
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                final String userKey = firebaseUser.getUid();
+                postData = new PostData(userKey, title, location,"1 Jun 2018" , nrTravelers, creationDate);
                 Log.d("addFragmentData", title + " " + location + " " + date + " " + nrTravelers);
 
                 Bundle bundleArgs = new Bundle();

@@ -6,13 +6,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class PostData implements Serializable{
-    public String title, location, travelDate, nrTravelers, creationDate;
+    public String title, location, travelDate, nrTravelers;
+    public Long creationDate;
+    public String userId;
     public String postText;
 
 
     public ArrayList<PostContent> contents = new ArrayList<PostContent>();
 
-    public PostData(String title, String location, String date, String nrTravelers, String creationDate) {
+    public PostData(String userId, String title, String location, String date, String nrTravelers, Long creationDate) {
+        this.userId = userId;
         this.title = title;
         this.location = location;
         this.travelDate = date;
