@@ -6,20 +6,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class PostData implements Serializable{
-    public String title, location, travelDate, nrTravelers;
-    public Long creationDate;
+    public String title, location, travelDate, nrDays;
+    public String creationDate;
     public String userId;
     public String postText;
 
 
     public ArrayList<PostContent> contents = new ArrayList<PostContent>();
 
-    public PostData(String userId, String title, String location, String date, String nrTravelers, Long creationDate) {
+    public PostData(String userId, String title, String location, String date, String nrDays, String creationDate) {
         this.userId = userId;
         this.title = title;
         this.location = location;
         this.travelDate = date;
-        this.nrTravelers = nrTravelers;
+        this.nrDays = nrDays;
         this.creationDate = creationDate;
     }
 
@@ -41,7 +41,7 @@ public class PostData implements Serializable{
     @Override
     public String toString(){
         return "Title: " + title + " - location: " + location + " - date: " + travelDate
-                + " - nrTravelers: " + nrTravelers + " - postText: " + postText;
+                + " - nrTravelers: " + nrDays + " - postText: " + postText;
     }
 
 }

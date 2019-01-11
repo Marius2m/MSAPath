@@ -2,10 +2,16 @@ package com.example.marius.path.user_data;
 
 import java.io.Serializable;
 
-public abstract class PostContent implements Serializable {
-    public String content;
+public class PostContent implements Serializable {
+    public String getContent() {
+        return content;
+    }
 
-    public PostContent(){
+    public void setContent(String content) {
         this.content = content;
     }
+
+    public String content;
+
+    public PostContent(){}
 }

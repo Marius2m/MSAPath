@@ -3,24 +3,27 @@ package com.example.marius.path.data_model;
 import com.example.marius.path.user_data.PostContent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class IndividualPost {
+    private String title;
+    private String location;
+    private String userId;
     private String creationDate;
     private String travelDate;
-    private String location;
     private String nrDays;
-    private String title;
-    private String author;
     private String thumbnail;
-    public ArrayList<PostContent> contents = new ArrayList<PostContent>();
+    public List<PostContent> contents = new ArrayList<PostContent>();
 
-    public IndividualPost(String creationDate, String travelDate, String location, String nrDays, String title, String author) {
+    public IndividualPost(){}
+
+    public IndividualPost(String creationDate, String travelDate, String location, String nrDays, String title, String userId) {
         this.creationDate = creationDate;
-        this.travelDate = travelDate;
         this.location = location;
+        this.travelDate = travelDate;
         this.nrDays = nrDays;
         this.title = title;
-        this.author = author;
+        this.userId = userId;
     }
 
     public String getThumbnail() {
@@ -71,19 +74,19 @@ public class IndividualPost {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public ArrayList<PostContent> getContents() {
+    public List<PostContent> getContents() {
         return contents;
     }
 
-    public void setContents(ArrayList<PostContent> contents) {
+    public void setContents(List<PostContent> contents) {
         this.contents = contents;
     }
 }

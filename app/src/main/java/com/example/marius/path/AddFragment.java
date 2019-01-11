@@ -61,7 +61,7 @@ public class AddFragment extends Fragment {
                 String title = postTitle.getText().toString().trim();
                 String location = postLocation.getText().toString().trim();
                 String date = postDate.getText().toString().trim();
-                String nrTravelers = postNrOfTravelers.getText().toString().trim();
+                String nrDays = postNrOfTravelers.getText().toString().trim();
 
                 /*if(title.isEmpty()){
                     postTitle.setError("A title is required");
@@ -78,25 +78,26 @@ public class AddFragment extends Fragment {
                     postDate.requestFocus();
                     return;
                 }//
-                if(nrTravelers.isEmpty()){
+                if(nrDays.isEmpty()){
                     postNrOfTravelers.setError("Number of travelers is required");
                     postNrOfTravelers.requestFocus();
                     return;
                 }*/
                 title="title";
                 location="location";
-                nrTravelers="5";
+                nrDays="5";
 
 //                DateFormat dateF = new SimpleDateFormat("d MMM yyyy");
 //                String creationDate = dateF.format(Calendar.getInstance().getTime());
 
-                Long creationDate = System.currentTimeMillis() / 1000;
-
+                Long creationDateLong = System.currentTimeMillis() / 1000;
+                String creationDate = "" + creationDateLong;
 
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 final String userKey = firebaseUser.getUid();
-                postData = new PostData(userKey, title, location,"1 Jun 2018" , nrTravelers, creationDate);
-                Log.d("addFragmentData", title + " " + location + " " + date + " " + nrTravelers);
+                postData = new PostData(userKey, title, location,"1 Jun 2018" , nrDays, creationDate);
+                Log.d("addFragmentData", title + " " + location + " " + date + " " + nrDays
+                );
 
                 Bundle bundleArgs = new Bundle();
                 bundleArgs.putSerializable("PostData",postData);

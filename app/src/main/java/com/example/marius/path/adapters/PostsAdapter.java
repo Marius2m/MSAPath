@@ -3,6 +3,7 @@ package com.example.marius.path.adapters;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +13,23 @@ import android.widget.TextView;
 import com.example.marius.path.R;
 import com.example.marius.path.data_model.IndividualPost;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHolder> {
     private List<IndividualPost> posts;
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
         public ImageView thumbnail;
-        public TextView title, author;
+        public TextView location, author, postThumbnailTitle;
         public CardView cardView;
 
         public CustomViewHolder(View view){
             super(view);
-            title = (TextView) view.findViewById(R.id.titlePost);
+            location = (TextView) view.findViewById(R.id.postLocationDays);
             author = (TextView) view.findViewById(R.id.authorPost);
+            postThumbnailTitle = (TextView) view.findViewById(R.id.postThumbnailTitle);
             cardView = (CardView) view.findViewById(R.id.cardPostView);
         }
     }
@@ -47,8 +51,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
     public void onBindViewHolder(@NonNull PostsAdapter.CustomViewHolder holder, int position) {
         IndividualPost post = posts.get(position);
 
-        holder.title.setText(post.getLocation() + " in " + post.getNrDays() + " days");
-        holder.author.setText("by " + post.getAuthor() + ", " + post.getCreationDate());
+        holder.location.setText(post.getLocation() + " in " + post.getNrDays() + " days");
+        //holder.author.setText("by " + post.getUserId() + ", " + post.getCreationDate());
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(Integer.parseInt(post.getCreationDate()));
+        String date = DateFormat.format("dd MMM yyyy", cal).toString();
+        holder.author.setText(date);
+        holder.postThumbnailTitle.setText(post.getTitle());
     }
 
     @Override

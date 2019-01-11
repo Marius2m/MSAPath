@@ -7,6 +7,14 @@ public class ParagraphContent extends PostContent{
         this.paragraph = paragraph;
     }
 
+    public String getParagraph() {
+        return paragraph;
+    }
+
+    public void setParagraph(String paragraph) {
+        this.paragraph = paragraph;
+    }
+
     @Override
     public String toString() {
         return paragraph;
