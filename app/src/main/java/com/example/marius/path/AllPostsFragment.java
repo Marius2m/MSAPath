@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.marius.path.adapters.PostsAdapter;
 import com.example.marius.path.data_model.IndividualPost;
+import com.example.marius.path.user_data.EndlessRecyclerViewScrollListener;
 import com.example.marius.path.user_data.ImageContent;
 import com.example.marius.path.user_data.MapContent;
 import com.example.marius.path.user_data.ParagraphContent;
@@ -53,7 +54,7 @@ public class AllPostsFragment extends Fragment {
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
         mAdapter = new PostsAdapter(posts);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
@@ -62,18 +63,12 @@ public class AllPostsFragment extends Fragment {
         initialPopulatePostsFromDB();
         mAdapter.notifyDataSetChanged();
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
+        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(mLayoutManager) {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (!recyclerView.canScrollVertically(1)) {
-                    //populatePosts();
-                    populatePostsDB();
-                    //mAdapter.notifyDataSetChanged();
-                    Toast.makeText(getActivity(), "Last", Toast.LENGTH_LONG).show();
-                }
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                populatePostsDB();
+                Toast.makeText(getActivity(), "Last", Toast.LENGTH_SHORT).show();
             }
         });
 
