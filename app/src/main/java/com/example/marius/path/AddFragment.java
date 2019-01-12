@@ -39,7 +39,7 @@ public class AddFragment extends Fragment {
         postDate = (TextView) v.findViewById(R.id.postDate);
         postNrOfTravelers = (EditText) v.findViewById(R.id.postNrTravelers);
 
-        nextPageBtn = (Button) v.findViewById(R.id.nextPage);
+        /*nextPageBtn = (Button) v.findViewById(R.id.nextPage);
         nextPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,7 +52,7 @@ public class AddFragment extends Fragment {
                 FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
                 fragmentT.replace(R.id.fragment_container, postDataFragment).commit();
             }
-        });
+        });*/
 
         submitDataBtn = (Button) v.findViewById(R.id.submitData);
         submitDataBtn.setOnClickListener(new View.OnClickListener() {

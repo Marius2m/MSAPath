@@ -1,86 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_bright">
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="false"
-        />
+    <LinearLayout
+        android:id="@+id/headerLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@drawable/background_top"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/postTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="78dp"
-        android:ems="10"
-        android:hint="Care to pick a title?"
-        android:inputType="textPersonName" />
+        <TextView
+            android:id="@+id/headerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="50dp"
+            android:text="Create Path"
+            android:textColor="#fff"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/postLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/postTitle"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="85dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="84dp"
-        android:ems="10"
-        android:hint="Where was this?"
-        android:inputType="textPersonName" />
 
-    <TextView
-        android:id="@+id/postDate"
-        android:layout_width="214dp"
-        android:layout_height="44dp"
-        android:layout_below="@+id/postLocation"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="86dp"
-        android:layout_marginTop="43dp"
-        android:layout_marginEnd="84dp"
-        android:ems="10"
-        android:hint="When did you travel? "
-        android:inputType="textPersonName" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/submitData"
+        android:layout_below="@+id/headerLinearLayout">
 
-    <EditText
-        android:id="@+id/postNrTravelers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/postDate"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="81dp"
-        android:ems="10"
-        android:hint="Number of travelers?"
-        android:inputType="textPersonName" />
+        <EditText
+            android:id="@+id/postTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Care to pick a title?"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/postLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Where was this?"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/postDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/postTitle" />
+
+        <TextView
+            android:id="@+id/postDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="When did you travel? "
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/postNrTravelers"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/postLocation" />
+
+        <EditText
+            android:id="@+id/postNrTravelers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:ems="10"
+            android:hint="Number of days?"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/postDate" />
+    </android.support.constraint.ConstraintLayout>
 
     <Button
         android:id="@+id/submitData"
-        android:layout_width="wrap_content"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="58dp"
-        android:text="Create Post" />
-
-    <Button
-        android:id="@+id/nextPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="115dp"
-        android:text="NEXT" />
+        android:background="@drawable/reg_btn_style"
+        android:textColor="#ffffff"
+        android:layout_marginBottom="48dp"
+        android:text="Continue" />
 
 </RelativeLayout>
