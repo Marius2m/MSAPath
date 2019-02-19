@@ -1,5 +1,6 @@
 package com.example.marius.path;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,12 +22,16 @@ import com.google.firebase.auth.FirebaseUser;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class AddFragment extends Fragment {
-    private EditText postTitle, postLocation, postNrOfTravelers;
-    private TextView postDate;
+    private EditText postTitle, postLocation, postNrOfTravelers, postDate;
     private Button submitDataBtn;
     private Button nextPageBtn;
+
+    private String postDateCalendar;
+
+    final Calendar myCalendar = Calendar.getInstance();
 
     private PostData postData = null;
 
@@ -36,8 +42,27 @@ public class AddFragment extends Fragment {
 
         postTitle = (EditText) v.findViewById(R.id.postTitle);
         postLocation = (EditText) v.findViewById(R.id.postLocation);
-        postDate = (TextView) v.findViewById(R.id.postDate);
+        postDate = (EditText) v.findViewById(R.id.postDate);
         postNrOfTravelers = (EditText) v.findViewById(R.id.postNrTravelers);
+
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, month);
+                myCalendar.set(Calendar.DAY_OF_MONTH, day);
+                updateTextDate();
+            }
+        };
+
+        postDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(getContext(), date,
+                        myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
 
         /*nextPageBtn = (Button) v.findViewById(R.id.nextPage);
         nextPageBtn.setOnClickListener(new View.OnClickListener() {
@@ -87,17 +112,13 @@ public class AddFragment extends Fragment {
                 location="location";
                 nrDays="5";
 
-//                DateFormat dateF = new SimpleDateFormat("d MMM yyyy");
-//                String creationDate = dateF.format(Calendar.getInstance().getTime());
-
                 Long creationDateLong = System.currentTimeMillis() / 1000;
                 String creationDate = "" + creationDateLong;
 
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 final String userKey = firebaseUser.getUid();
-                postData = new PostData(userKey, title, location,"1 Jun 2018" , nrDays, creationDate);
-                Log.d("addFragmentData", title + " " + location + " " + date + " " + nrDays
-                );
+                postData = new PostData(userKey, title, location, postDateCalendar , nrDays, creationDate);
+                Log.d("addFragmentData", title + " " + location + " " + postDateCalendar + " " + nrDays);
 
                 Bundle bundleArgs = new Bundle();
                 bundleArgs.putSerializable("PostData",postData);
@@ -114,5 +135,13 @@ public class AddFragment extends Fragment {
 
         return v;
         //return inflater.inflate(R.layout.fragment_add, container, false);
+    }
+
+    private void updateTextDate(){
+        String dateFormat = "dd MMM yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat, Locale.UK);
+
+        postDateCalendar = simpleDateFormat.format(myCalendar.getTime());
+        postDate.setText(postDateCalendar);
     }
 }
