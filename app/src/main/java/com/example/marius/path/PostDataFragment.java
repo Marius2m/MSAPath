@@ -1,8 +1,10 @@
 package com.example.marius.path;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -20,12 +22,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marius.path.user_data.ImageContent;
 import com.example.marius.path.user_data.ParagraphContent;
 import com.example.marius.path.user_data.PostData;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,14 +38,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class PostDataFragment extends Fragment {
     private DatabaseReference mDatabase;
 
+    private static final int PICK_IMG_REQ_CODE = 1;
+
     private ScrollView scrollView;
     private TextView test;
     private RelativeLayout parentRLayout;
+    private ImageView mImageView;
     private CoordinatorLayout coordinatorLayout;
 
     private Button doneBtn;
@@ -49,6 +59,7 @@ public class PostDataFragment extends Fragment {
 
     private int currentId = 0;
     private int lineIndex = 0;
+    private Uri mImageUri;
 
     public PostData postData;
 
@@ -66,6 +77,7 @@ public class PostDataFragment extends Fragment {
         test = (TextView) v.findViewById(R.id.row0);
         currentId = test.getId();
 
+        //mImageView = (ImageView) v.findViewById(R.id.img_view);
         doneBtn = (Button) v.findViewById(R.id.done_btn);
         cancelBtn = (Button) v.findViewById(R.id.cancel_btn);
 
@@ -166,6 +178,13 @@ public class PostDataFragment extends Fragment {
                 textLayout.startAnimation(hideLayout);
                 fab.startAnimation(hideBtn);
 
+
+                chosePicture();
+
+
+
+
+
                 Log.d("InsidePicture", "PICTURE");
             }
         });
@@ -263,14 +282,65 @@ public class PostDataFragment extends Fragment {
         newDynamicTextView.setId(TextView.generateViewId());
 
         currentId = newDynamicTextView.getId();
-        Log.d("currentId", ""+currentId);
+        Log.d("currentId TXT", ""+currentId);
         newDynamicTextView.setText(text);
         newDynamicTextView.setPadding(padding,0, padding, padding);
 
-        postData.addPostContent(new ParagraphContent(text));
+        postData.addPostContent(new ParagraphContent(text, currentId));
 
-        Log.d("newDynamic:", newDynamicTextView.getText().toString());
+        Log.d("newDynamicTxt:", newDynamicTextView.getText().toString());
         return newDynamicTextView;
     }
 
+    private ImageView createNewImageView(int alignment, int margin, int padding){
+        ImageView newDynamicImageView = new ImageView(getActivity());
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins(margin, 0, margin, 2*margin);
+        layoutParams.addRule(RelativeLayout.BELOW, currentId);
+        newDynamicImageView.setLayoutParams(layoutParams);
+
+        newDynamicImageView.setId(ImageView.generateViewId());
+
+        currentId = newDynamicImageView.getId();
+        Log.d("currentId IMG", ""+currentId);
+
+        newDynamicImageView.setPadding(padding*2,0, padding*2, padding*2);
+        newDynamicImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        newDynamicImageView.setAdjustViewBounds(true);
+
+        // Native
+        //newDynamicImageView.setImageURI(mImageUri);
+
+        // Picassso API
+        Picasso.get().load(mImageUri).into(newDynamicImageView);
+
+        //postData.addPostContent(new ImageContent(currentId));
+        Log.d("newDynamicImg:", currentId+"");
+        return newDynamicImageView;
+    }
+
+    private void chosePicture(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICK_IMG_REQ_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == PICK_IMG_REQ_CODE && resultCode == RESULT_OK
+                && data != null && data.getData() != null){
+            mImageUri = data.getData();
+
+            parentRLayout.addView(createNewImageView(0, 10, 20));//createNewTextView(paragraphText.getText().toString(), 0, 10, 20));
+
+
+            //Picasso.get().load(mImageUri).into(mImageView);
+        }
+    }
 }

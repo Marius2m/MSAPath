@@ -75,10 +75,20 @@
         android:id="@+id/relativeLayoutId">
         <TextView
             android:id="@+id/row0"
+            android:layout_marginTop="20dp"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:text="TextView"
             />
+       <!-- <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/img_view"
+            android:background="@drawable/all_paths"
+            android:layout_below="@+id/row0"
+
+            />
+            -->
     </RelativeLayout>
     </ScrollView>
     <android.support.design.widget.CoordinatorLayout
