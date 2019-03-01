@@ -317,7 +317,7 @@ public class PostDataFragment extends Fragment {
         // Picassso API
         Picasso.get().load(mImageUri).into(newDynamicImageView);
 
-        //postData.addPostContent(new ImageContent(currentId));
+        postData.addPostContent(new ImageContent(currentId));
         Log.d("newDynamicImg:", currentId+"");
         return newDynamicImageView;
     }

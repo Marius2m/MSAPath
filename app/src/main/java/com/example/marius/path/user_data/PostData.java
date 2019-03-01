@@ -2,6 +2,8 @@ package com.example.marius.path.user_data;
 
 import android.util.Log;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -13,6 +15,8 @@ public class PostData implements Serializable{
 
 
     public ArrayList<PostContent> contents = new ArrayList<PostContent>();
+
+    public PostData(){}
 
     public PostData(String userId, String title, String location, String date, String nrDays, String creationDate) {
         this.userId = userId;
@@ -31,10 +35,15 @@ public class PostData implements Serializable{
         this.postText = postText;
     }
 
+    @Exclude
+    public ArrayList<PostContent> getPostContent(){
+        return this.contents;
+    }
+
     public void printContent(){
-        Log.d("Page1", this.toString());
+        System.out.println(this.toString());
         for (PostContent pc: contents) {
-            Log.d("pc:", contents.toString());
+            System.out.println("id:" + pc.getId() + "content:" + pc.getContent());
         }
     }
 
