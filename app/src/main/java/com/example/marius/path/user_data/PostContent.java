@@ -4,17 +4,18 @@ import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 
-public class PostContent implements Serializable {
+public abstract class PostContent implements Serializable {
     @Exclude
     protected int id = 0;
+
+    @Exclude
+    public abstract String getType();
 
     public String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    public abstract void setContent(String content);
 
     @Exclude
     public int getId(){

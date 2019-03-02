@@ -22,7 +22,13 @@ public class ImageContent extends PostContent{
         this.id = id;
     }
 
-    public void setImageRef(String ref){ this.image = ref; }
+    @Exclude @Override
+    public String getType(){
+        return contentType;
+    }
+
+    @Override
+    public void setContent(String ref){ this.image = ref; }
 
     @Override
     public String toString() {

@@ -14,6 +14,11 @@ public class ParagraphContent extends PostContent{
         this.id = id;
     }
 
+    @Exclude @Override
+    public String getType(){
+        return contentType;
+    }
+
     public ParagraphContent(String paragraph){
         this.paragraph = paragraph;
     }
@@ -22,7 +27,8 @@ public class ParagraphContent extends PostContent{
         return paragraph;
     }
 
-    public void setParagraph(String paragraph) {
+    @Override
+    public void setContent(String paragraph) {
         this.paragraph = paragraph;
     }
 
