@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.marius.path.R;
 import com.example.marius.path.data_model.IndividualPost;
@@ -49,7 +50,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
 
     @Override
     public void onBindViewHolder(@NonNull PostsAdapter.CustomViewHolder holder, int position) {
-        IndividualPost post = posts.get(position);
+        final IndividualPost post = posts.get(position);
 
         holder.location.setText(post.getLocation() + " in " + post.getNrDays() + " days");
         //holder.author.setText("by " + post.getUserId() + ", " + post.getCreationDate());
@@ -58,6 +59,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
         String date = DateFormat.format("dd MMM yyyy", cal).toString();
         holder.author.setText(date);
         holder.postThumbnailTitle.setText(post.getTitle());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

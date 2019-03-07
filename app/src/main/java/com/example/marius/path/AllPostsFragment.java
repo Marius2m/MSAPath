@@ -75,11 +75,11 @@ public class AllPostsFragment extends Fragment {
         return v;
     }
 
-    private void populatePosts(){
-        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_1", "5","Venice", "Marius Mircea"));
-        posts.add(new IndividualPost("1547220397", "15 MAR 2019", "MOCK_DATA_2", "3","Francee", "Karina Ciupa"));
-        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor"));
-    }
+//    private void populatePosts(){
+//        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_1", "5","Venice", "Marius Mircea"));
+//        posts.add(new IndividualPost("1547220397", "15 MAR 2019", "MOCK_DATA_2", "3","Francee", "Karina Ciupa"));
+//        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor"));
+//    }
 
     private void initialPopulatePostsFromDB(){
         mDatabase.limitToFirst(4).addValueEventListener(new ValueEventListener() {
@@ -107,7 +107,9 @@ public class AllPostsFragment extends Fragment {
                     }
 
                     oldestPostId = postSnapShot.getKey();
+                    Log.d("POSTIDS:", oldestPostId);
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
+                    indivPost.setPostId(oldestPostId);
                     indivPost.setContents(typePostContents);
 
                     /*
@@ -147,8 +149,8 @@ public class AllPostsFragment extends Fragment {
                     System.out.println("[2] ACC NAME: " + indivPost.getUserId());
                     postsDB.add(indivPost);
                     System.out.println("[3] ACC NAME: " + indivPost.getUserId());
-                    System.out.println("postSnapShot.getKey: " + postSnapShot.getKey()); // "-key1", "-key2", etc
-                    System.out.println("postSnapShot.getValue() " + postSnapShot.getValue()); // true, true, etc
+                    //System.out.println("postSnapShot.getKey: " + postSnapShot.getKey()); // "-key1", "-key2", etc
+                    //System.out.println("postSnapShot.getValue() " + postSnapShot.getValue()); // true, true, etc
                     Log.d("ShowPostId", oldestPostId);
                 }
 
@@ -190,6 +192,7 @@ public class AllPostsFragment extends Fragment {
 
                     oldestPostId = postSnapShot.getKey();
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
+                    indivPost.setPostId(oldestPostId);
                     indivPost.setContents(typePostContents);
 
                     /*
