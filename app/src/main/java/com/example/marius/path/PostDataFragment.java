@@ -76,6 +76,7 @@ public class PostDataFragment extends Fragment {
     private int lineIndex = 0;
     private Uri mImageUri;
     private int index = 0;
+    private boolean havePictures = false;
 
     public PostData postData;
     private ArrayList<Uri> pictureUris = new ArrayList<Uri>();
@@ -218,7 +219,11 @@ public class PostDataFragment extends Fragment {
                 Log.d("userKey", userKey);
 
                 postKey = mDatabase.child("posts").push().getKey();
-                uploadPictures(pictureUris);
+                if(havePictures == true) {
+                    uploadPictures(pictureUris);
+                }else{
+                    postDataToFirebase();
+                }
 
 
 
@@ -458,6 +463,8 @@ public class PostDataFragment extends Fragment {
         postData.addPostContent(new ImageContent(currentId));
         //pictureUris.add(mImageUri);
         Log.d("newDynamicImg:", currentId+"");
+
+        havePictures = true;
 
         return newDynamicImageView;
     }
