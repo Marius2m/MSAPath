@@ -1,5 +1,7 @@
 package com.example.marius.path.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marius.path.R;
+import com.example.marius.path.SinglePostActivity;
 import com.example.marius.path.data_model.IndividualPost;
 
 import java.util.Calendar;
@@ -20,6 +23,7 @@ import java.util.Locale;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHolder> {
     private List<IndividualPost> posts;
+    Context context;
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
         public ImageView thumbnail;
@@ -44,7 +48,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
     public PostsAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.post_list, parent, false);
-
+        context = parent.getContext();
         return new CustomViewHolder(itemView);
     }
 
@@ -63,6 +67,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), SinglePostActivity.class);
+                i.putExtra("postId",post.getPostId());
+                context.startActivity(i);
                 Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
             }
         });

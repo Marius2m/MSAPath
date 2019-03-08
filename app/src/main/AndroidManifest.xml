@@ -24,6 +24,7 @@
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LogInActivity" />
         <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".SinglePostActivity"></activity>
     </application>
 
 </manifest>
