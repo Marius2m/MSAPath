@@ -14,7 +14,6 @@ public class PostData implements Serializable{
     public String postText;
 
 
-    public ArrayList<PostContent> contents = new ArrayList<PostContent>();
 
     public PostData(){}
 
@@ -27,24 +26,25 @@ public class PostData implements Serializable{
         this.creationDate = creationDate;
     }
 
-    public void addPostContent(PostContent postContent){
-        contents.add(postContent);
-    }
+//    @Exclude
+//    public void addPostContent(PostContent postContent){
+//        contents.add(postContent);
+//    }
 
     public void setPostText(String postText) {
         this.postText = postText;
     }
 
-    @Exclude
-    public ArrayList<PostContent> getPostContent(){
-        return this.contents;
-    }
+//    @Exclude
+//    public ArrayList<PostContent> getPostContent(){
+//        return this.contents;
+//    }
 
     public void printContent(){
         System.out.println(this.toString());
-        for (PostContent pc: contents) {
-            System.out.println("id:" + pc.getId() + "content:" + pc.getContent());
-        }
+//        for (PostContent pc: contents) {
+//            System.out.println("id:" + pc.getId() + "content:" + pc.getContent());
+//        }
     }
 
     @Override

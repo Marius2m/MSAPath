@@ -4,10 +4,15 @@ import com.google.firebase.database.Exclude;
 
 public class ParagraphContent extends PostContent{
     public String paragraph;
+
     @Exclude
     private static final String contentType = "paragraph";
 
     public ParagraphContent() {}
+
+    public ParagraphContent(String paragraph){
+        this.paragraph = paragraph;
+    }
 
     public ParagraphContent(String paragraph, int id){
         this.paragraph = paragraph;
@@ -19,13 +24,6 @@ public class ParagraphContent extends PostContent{
         return contentType;
     }
 
-    public ParagraphContent(String paragraph){
-        this.paragraph = paragraph;
-    }
-
-    public String getParagraph() {
-        return paragraph;
-    }
 
     @Override
     public void setContent(String paragraph) {

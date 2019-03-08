@@ -4,9 +4,13 @@ import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 
-public class PostContent implements Serializable {
+public abstract class PostContent implements Serializable {
+    public String content;
+
     @Exclude
     protected int id = 0;
+
+    public PostContent(){}
 
     @Exclude
     public  String getType(){return "String";}
@@ -22,7 +26,5 @@ public class PostContent implements Serializable {
         return id;
     }
 
-    public String content;
 
-    public PostContent(){}
 }

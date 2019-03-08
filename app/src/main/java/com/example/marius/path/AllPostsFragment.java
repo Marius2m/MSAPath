@@ -110,7 +110,6 @@ public class AllPostsFragment extends Fragment {
                     Log.d("POSTIDS:", oldestPostId);
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
                     indivPost.setPostId(oldestPostId);
-                    indivPost.setContents(typePostContents);
 
                     /*
                     FirebaseDatabase.getInstance().getReference("/users").child(indivPost.getUserId()).addValueEventListener(new ValueEventListener() {
@@ -193,7 +192,6 @@ public class AllPostsFragment extends Fragment {
                     oldestPostId = postSnapShot.getKey();
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
                     indivPost.setPostId(oldestPostId);
-                    indivPost.setContents(typePostContents);
 
                     /*
                     FirebaseDatabase.getInstance().getReference("/users").child(indivPost.getUserId()).addValueEventListener(new ValueEventListener() {

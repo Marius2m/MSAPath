@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.example.marius.path.user_data.ImageContent;
 import com.example.marius.path.user_data.ParagraphContent;
 import com.example.marius.path.user_data.PostContent;
+import com.example.marius.path.user_data.PostContents;
 import com.example.marius.path.user_data.PostData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -81,6 +82,7 @@ public class PostDataFragment extends Fragment {
     public PostData postData;
     private ArrayList<Uri> pictureUris = new ArrayList<Uri>();
     private ArrayList<String> pictureUrls = new ArrayList<String>();
+    private ArrayList<PostContent> postContents = new ArrayList<PostContent>();
 
     ContentResolver contentResolver;
     MimeTypeMap mime;
@@ -367,23 +369,19 @@ public class PostDataFragment extends Fragment {
     }
 
     private void postDataToFirebase(){
+        commitPostToFirebase();
+    }
+
+    private void commitPostToFirebase() {
         mDatabase.child("posts").child(postKey).setValue(postData)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-//                        currentId = 0;
-//                        index = 0;
-//                        pictureUris.clear();
-//                        pictureUrls.clear();
+                        for(PostContent p : postContents){
+                            System.out.println(p.getContent() + "\n");
+                        }
 
-                        Toast.makeText(getActivity(), "Post created!", Toast.LENGTH_SHORT).show();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
-                                fragmentT.replace(R.id.fragment_container, new AddFragment()).commit();
-                            }
-                            }, 2000);
+                        commitPostContentToFirebase();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -394,13 +392,37 @@ public class PostDataFragment extends Fragment {
                 });
     }
 
+    private void commitPostContentToFirebase(){
+        PostContents postContentsData = new PostContents();
+        postContentsData.setPostContents(postContents);
+
+        mDatabase.child("posts_contents").child(postKey).setValue(postContentsData.getPostContents())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
+                                fragmentT.replace(R.id.fragment_container, new AddFragment()).commit();
+                            }
+                        }, 2000);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getActivity(), "Failed to commit post_contents data. Make sure you have mobile data turned on!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void addUrlsToPost(){
-        ArrayList<PostContent> contents = postData.contents;
-        int size = contents.size();
+        int size = postContents.size();
         int index = 0;
 
         for(int i = 0; i < size; i++){
-            PostContent postContent = contents.get(i);
+            PostContent postContent = postContents.get(i);
             if(postContent.getType().equals("image")){
                 postContent.setContent(pictureUrls.get(index));
                 index++;
@@ -429,7 +451,7 @@ public class PostDataFragment extends Fragment {
         newDynamicTextView.setText(text);
         newDynamicTextView.setPadding(padding,0, padding, padding);
 
-        postData.addPostContent(new ParagraphContent(text, currentId));
+        postContents.add(new ParagraphContent(text, currentId));
 
         Log.d("newDynamicTxt:", newDynamicTextView.getText().toString());
         return newDynamicTextView;
@@ -460,7 +482,8 @@ public class PostDataFragment extends Fragment {
         // Picassso API
         Picasso.get().load(mImageUri).into(newDynamicImageView);
 
-        postData.addPostContent(new ImageContent(currentId));
+        postContents.add(new ImageContent(currentId));
+
         //pictureUris.add(mImageUri);
         Log.d("newDynamicImg:", currentId+"");
 

@@ -4,6 +4,7 @@ import com.google.firebase.database.Exclude;
 
 public class ImageContent extends PostContent{
     public String image = "emptyUri";
+
     @Exclude
     private static final String contentType = "image";
 

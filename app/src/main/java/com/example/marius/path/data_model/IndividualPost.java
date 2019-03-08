@@ -14,7 +14,6 @@ public class IndividualPost {
     private String travelDate;
     private String nrDays;
     private String thumbnail;
-    public List<PostContent> contents = new ArrayList<PostContent>();
 
     public IndividualPost(){}
 
@@ -89,13 +88,5 @@ public class IndividualPost {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public List<PostContent> getContents() {
-        return contents;
-    }
-
-    public void setContents(List<PostContent> contents) {
-        this.contents = contents;
     }
 }
