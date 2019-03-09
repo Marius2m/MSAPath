@@ -10,9 +10,12 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class SinglePostActivity extends AppCompatActivity {
+import com.example.marius.path.data_model.IndividualPost;
+
+public class SinglePostActivity extends AppCompatActivity implements View.OnClickListener {
     ImageButton back_button, heart_button;
     boolean isRedHeart = false;
+    IndividualPost postData = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -24,11 +27,27 @@ public class SinglePostActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         back_button = (ImageButton) findViewById(R.id.back_toolbar_btn);
+        back_button.setOnClickListener(this);
         heart_button = (ImageButton) findViewById(R.id.heart_toolbar_btn);
+        heart_button.setOnClickListener(this);
 
-        heart_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
+
+        Intent intent = getIntent();
+        postData = (IndividualPost)intent.getSerializableExtra("postObject");
+        System.out.println("INSIDE SINGLE POST ACTIVITY " + postData.toString() + "=!!!");
+        Toast.makeText(this.getApplicationContext(), postData.getPostId(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.back_toolbar_btn:
+                Toast.makeText(v.getContext(), "lolk", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.heart_toolbar_btn:
                 if(isRedHeart == false) {
                     heart_button.setImageResource(R.drawable.ic_favorite_red_24dp);
                     isRedHeart = true;
@@ -36,21 +55,15 @@ public class SinglePostActivity extends AppCompatActivity {
                     heart_button.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                     isRedHeart= false;
                 }
-            }
-        });
-        back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
 
-                    FragmentManager fm = getSupportFragmentManager();
-                    fm.popBackStackImmediate();
+//            case R.id.threeButton:
+//                // do your code
+//                break;
 
-            }
-        });
+            default:
+                break;
+        }
 
-
-        Intent intent = getIntent();
-        String postId = intent.getStringExtra("postId");
-        Toast.makeText(this.getApplicationContext(), postId, Toast.LENGTH_SHORT).show();
     }
 }

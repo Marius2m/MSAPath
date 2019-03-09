@@ -17,6 +17,7 @@ import com.example.marius.path.R;
 import com.example.marius.path.SinglePostActivity;
 import com.example.marius.path.data_model.IndividualPost;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -68,7 +69,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), SinglePostActivity.class);
-                i.putExtra("postId",post.getPostId());
+
+                i.putExtra("postObject",(Serializable) post);
+
                 context.startActivity(i);
                 Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
             }

@@ -2,10 +2,11 @@ package com.example.marius.path.data_model;
 
 import com.example.marius.path.user_data.PostContent;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndividualPost {
+public class IndividualPost implements Serializable {
     private String title;
     private String location;
     private String userId;
@@ -24,6 +25,20 @@ public class IndividualPost {
         this.nrDays = nrDays;
         this.title = title;
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "IndividualPost{" +
+                "title='" + title + '\'' +
+                ", location='" + location + '\'' +
+                ", userId='" + userId + '\'' +
+                ", postId='" + postId + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", travelDate='" + travelDate + '\'' +
+                ", nrDays='" + nrDays + '\'' +
+                ", thumbnail='" + thumbnail + '\'' +
+                '}';
     }
 
     public String getPostId() {

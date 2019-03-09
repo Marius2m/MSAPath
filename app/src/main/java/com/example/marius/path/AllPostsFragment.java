@@ -88,23 +88,24 @@ public class AllPostsFragment extends Fragment {
                 List<IndividualPost> postsDB = new ArrayList<>();
 
                 for(DataSnapshot postSnapShot : dataSnapshot.getChildren()){
+
                     List<PostContent> typePostContents = new ArrayList<>();
 
-                    for(DataSnapshot contentList: postSnapShot.child("contents").getChildren()){
-                        for(DataSnapshot content: contentList.getChildren()) {
-                            if(content.getKey().equals("paragraph")){
-                                typePostContents.add(new ParagraphContent(content.getValue().toString()));
-                            }else if(content.getKey().equals("map")){
-                                typePostContents.add(new MapContent(content.getValue().toString()));
-                            }else if(content.getKey().equals("image")){
-                                typePostContents.add(new ImageContent(content.getValue().toString()));
-                            }
-//                            System.out.println("ZZ 1: " + content.getKey());
-//                            System.out.println("ZZ 2: " + content.getValue());
-                        }
-//                        System.out.println("YY 1" + contentList.getKey());
-//                        System.out.println("YY 2" + contentList.getValue());
-                    }
+//                    for(DataSnapshot contentList: postSnapShot.child("contents").getChildren()){
+//                        for(DataSnapshot content: contentList.getChildren()) {
+//                            if(content.getKey().equals("paragraph")){
+//                                typePostContents.add(new ParagraphContent(content.getValue().toString()));
+//                            }else if(content.getKey().equals("map")){
+//                                typePostContents.add(new MapContent(content.getValue().toString()));
+//                            }else if(content.getKey().equals("image")){
+//                                typePostContents.add(new ImageContent(content.getValue().toString()));
+//                            }
+////                            System.out.println("ZZ 1: " + content.getKey());
+////                            System.out.println("ZZ 2: " + content.getValue());
+//                        }
+////                        System.out.println("YY 1" + contentList.getKey());
+////                        System.out.println("YY 2" + contentList.getValue());
+//                    }
 
                     oldestPostId = postSnapShot.getKey();
                     Log.d("POSTIDS:", oldestPostId);
@@ -145,11 +146,8 @@ public class AllPostsFragment extends Fragment {
 //                        }
 //                    });
 
-                    System.out.println("[2] ACC NAME: " + indivPost.getUserId());
                     postsDB.add(indivPost);
-                    System.out.println("[3] ACC NAME: " + indivPost.getUserId());
-                    //System.out.println("postSnapShot.getKey: " + postSnapShot.getKey()); // "-key1", "-key2", etc
-                    //System.out.println("postSnapShot.getValue() " + postSnapShot.getValue()); // true, true, etc
+
                     Log.d("ShowPostId", oldestPostId);
                 }
 
@@ -171,23 +169,24 @@ public class AllPostsFragment extends Fragment {
                 List<IndividualPost> postsDB = new ArrayList<>();
 
                 for(DataSnapshot postSnapShot : dataSnapshot.getChildren()){
-                    List<PostContent> typePostContents = new ArrayList<>();
 
-                    for(DataSnapshot contentList: postSnapShot.child("contents").getChildren()){
-                        for(DataSnapshot content: contentList.getChildren()) {
-                            if(content.getKey().equals("paragraph")){
-                                typePostContents.add(new ParagraphContent(content.getValue().toString()));
-                            }else if(content.getKey().equals("map")){
-                                typePostContents.add(new MapContent(content.getValue().toString()));
-                            }else if(content.getKey().equals("image")){
-                                typePostContents.add(new ImageContent(content.getValue().toString()));
-                            }
-//                            System.out.println("ZZ 1: " + content.getKey());
-//                            System.out.println("ZZ 2: " + content.getValue());
-                        }
-//                        System.out.println("YY 1" + contentList.getKey());
-//                        System.out.println("YY 2" + contentList.getValue());
-                    }
+//                    List<PostContent> typePostContents = new ArrayList<>();
+
+//                    for(DataSnapshot contentList: postSnapShot.child("contents").getChildren()){
+//                        for(DataSnapshot content: contentList.getChildren()) {
+//                            if(content.getKey().equals("paragraph")){
+//                                typePostContents.add(new ParagraphContent(content.getValue().toString()));
+//                            }else if(content.getKey().equals("map")){
+//                                typePostContents.add(new MapContent(content.getValue().toString()));
+//                            }else if(content.getKey().equals("image")){
+//                                typePostContents.add(new ImageContent(content.getValue().toString()));
+//                            }
+////                            System.out.println("ZZ 1: " + content.getKey());
+////                            System.out.println("ZZ 2: " + content.getValue());
+//                        }
+////                        System.out.println("YY 1" + contentList.getKey());
+////                        System.out.println("YY 2" + contentList.getValue());
+//                    }
 
                     oldestPostId = postSnapShot.getKey();
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
@@ -227,11 +226,7 @@ public class AllPostsFragment extends Fragment {
 //                        }
 //                    });
 
-                    System.out.println("[2] ACC NAME: " + indivPost.getUserId());
                     postsDB.add(indivPost);
-                    System.out.println("[3] ACC NAME: " + indivPost.getUserId());
-                    System.out.println("postSnapShot.getKey: " + postSnapShot.getKey()); // "-key1", "-key2", etc
-                    System.out.println("postSnapShot.getValue() " + postSnapShot.getValue()); // true, true, etc
                     Log.d("ShowPostId", oldestPostId);
                 }
 
