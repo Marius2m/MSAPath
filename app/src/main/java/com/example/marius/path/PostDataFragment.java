@@ -15,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +62,7 @@ public class PostDataFragment extends Fragment {
     private DatabaseReference mDatabase;
     private StorageReference mStorageRef;
 
-    private static final int PICK_IMG_REQ_CODE = 1;
+    private static final int PICK_IMG_REQ_CODE = 2;
 
     private ScrollView scrollView;
     private TextView test;
@@ -76,7 +77,9 @@ public class PostDataFragment extends Fragment {
     private int currentId = 0;
     private int lineIndex = 0;
     private Uri mImageUri;
+    private Uri coverImageUri;
     private int index = 0;
+    private String path;
     private boolean havePictures = false;
 
     public PostData postData;
@@ -179,7 +182,7 @@ public class PostDataFragment extends Fragment {
                            // Toast.makeText(getActivity(), paragraphText.getText().toString(), Toast.LENGTH_SHORT).show();
 
 
-                            parentRLayout.addView(createNewTextView(paragraphText.getText().toString(), 0, 10, 20));
+                            parentRLayout.addView(createNewTextView(paragraphText.getText().toString(),10, 20));
                             dialog.dismiss();
                         }else{
                             Toast.makeText(getActivity(), "Empty", Toast.LENGTH_SHORT).show();
@@ -221,8 +224,10 @@ public class PostDataFragment extends Fragment {
                 Log.d("userKey", userKey);
 
                 postKey = mDatabase.child("posts").push().getKey();
+                path = "posts/ " + postKey + "/";
                 if(havePictures == true) {
-                    uploadPictures(pictureUris);
+                    uploadCoverImg();
+                    //uploadPictures(pictureUris);
                 }else{
                     postDataToFirebase();
                 }
@@ -295,9 +300,32 @@ public class PostDataFragment extends Fragment {
 
         Bundle b = getArguments();
         postData = (PostData) getArguments().getSerializable("PostData");
-        Log.i("getPostData",postData.toString());
+        //String coverPhotoStringUri = (String) getArguments().getSerializable("CoverImgUri");
+        coverImageUri = Uri.parse((String) getArguments().getSerializable("CoverImgUri"));
+
+        Log.i("getPostData", postData.toString());
+        Log.d("coverImageUri", coverImageUri.toString());
 
         return v;
+    }
+
+    private void uploadCoverImg(){
+        final StorageReference picRef = mStorageRef.child(path + System.currentTimeMillis()
+                                        + "." + getFileExtension(coverImageUri));
+
+        picRef.putFile(coverImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.d("BITCH", uri.toString() + "\n" + "postKey:" + postKey);
+                        postData.setCoverImg(uri.toString());
+                        uploadPictures(pictureUris);
+                    }
+                });
+            }
+        });
     }
 
     private String getFileExtension(Uri uri){
@@ -309,7 +337,7 @@ public class PostDataFragment extends Fragment {
         final String userKey = firebaseUser.getUid();
 
         Uri img = pictureUris.get(index);
-        final StorageReference picRef = mStorageRef.child("posts/" + postKey +"/" + System.currentTimeMillis() + "." + getFileExtension(img));
+        final StorageReference picRef = mStorageRef.child(path + System.currentTimeMillis() + "." + getFileExtension(img));
 
         ++index;
 
@@ -430,7 +458,7 @@ public class PostDataFragment extends Fragment {
         }
     }
 
-    TextView createNewTextView(String text, int alignment, int margin, int padding){
+    TextView createNewTextView(String text, int margin, int padding){
         TextView newDynamicTextView = new TextView(getActivity());
 
         /*String idName = "row"+lineIndex;
@@ -440,7 +468,7 @@ public class PostDataFragment extends Fragment {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
         );
-        layoutParams.setMargins(margin, 0, margin, 2*margin);
+        layoutParams.setMargins(margin * 1, margin * 1, margin * 1, 1 * margin);
         layoutParams.addRule(RelativeLayout.BELOW, currentId);
         newDynamicTextView.setLayoutParams(layoutParams);
 
@@ -449,7 +477,9 @@ public class PostDataFragment extends Fragment {
         currentId = newDynamicTextView.getId();
         Log.d("currentId TXT", ""+currentId);
         newDynamicTextView.setText(text);
-        newDynamicTextView.setPadding(padding,0, padding, padding);
+
+        newDynamicTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        newDynamicTextView.setPadding(padding * 2, 0, padding * 2, padding * 1);
 
         postContents.add(new ParagraphContent(text, currentId));
 
@@ -457,13 +487,13 @@ public class PostDataFragment extends Fragment {
         return newDynamicTextView;
     }
 
-    private ImageView createNewImageView(int alignment, int margin, int padding){
+    private ImageView createNewImageView(int margin, int padding){
         ImageView newDynamicImageView = new ImageView(getActivity());
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
         );
-        layoutParams.setMargins(margin, 0, margin, 2*margin);
+        layoutParams.setMargins(margin * 1 , margin * 1, margin * 1, 1 * margin);
         layoutParams.addRule(RelativeLayout.BELOW, currentId);
         newDynamicImageView.setLayoutParams(layoutParams);
 
@@ -472,7 +502,7 @@ public class PostDataFragment extends Fragment {
         currentId = newDynamicImageView.getId();
         Log.d("currentId IMG", ""+currentId);
 
-        newDynamicImageView.setPadding(padding*2,0, padding*2, padding*2);
+        newDynamicImageView.setPadding(padding * 2,0, padding * 2, padding * 1);
         newDynamicImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         newDynamicImageView.setAdjustViewBounds(true);
 
@@ -511,7 +541,7 @@ public class PostDataFragment extends Fragment {
             pictureUris.add(temp);
             Log.d("mImageUri:", mImageUri.toString());
 
-            parentRLayout.addView(createNewImageView(0, 10, 20));//createNewTextView(paragraphText.getText().toString(), 0, 10, 20));
+            parentRLayout.addView(createNewImageView(10, 20));//createNewTextView(paragraphText.getText().toString(), 0, 10, 20));
 
 
             //Picasso.get().load(mImageUri).into(mImageView);

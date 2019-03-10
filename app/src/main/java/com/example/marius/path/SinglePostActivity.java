@@ -1,13 +1,10 @@
 package com.example.marius.path;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -21,8 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marius.path.data_model.IndividualPost;
-import com.example.marius.path.user_data.ImageContent;
-import com.example.marius.path.user_data.ParagraphContent;
 import com.example.marius.path.user_data.PostContent;
 import com.example.marius.path.user_data.PostContentFactory;
 import com.example.marius.path.user_data.PostContents;
@@ -38,15 +33,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
-
 public class SinglePostActivity extends AppCompatActivity implements View.OnClickListener {
     ImageButton back_button, heart_button;
     private boolean isRedHeart = false;
     private TextView postThumbnailTitle, destination_text, date_text, days_text;
     private RelativeLayout parentRLayout;
     private CardView cardView;
-    private ImageView userProfilePicturePost;
+    private ImageView userProfilePicturePost, coverImage;
     private TextView userNamePost, creationDatePost;
     private ConstraintLayout constraintLayoutBottomSection;
 
@@ -78,6 +71,7 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         destination_text = (TextView) findViewById(R.id.destination_text);
         date_text = (TextView) findViewById(R.id.date_text);
         days_text = (TextView) findViewById(R.id.days_text);
+        coverImage = (ImageView) findViewById(R.id.post_row_0);
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.m_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -149,6 +143,12 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void renderPage(){
+        Picasso.get()
+                .load(Uri.parse(postData.getCoverImg()))
+                .centerCrop()
+                .fit()
+                .into(coverImage);
+
         postThumbnailTitle.setText(postData.getTitle());
         destination_text.setText(postData.getLocation());
         date_text.setText(postData.getTravelDate());

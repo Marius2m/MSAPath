@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent"
@@ -7,37 +7,84 @@
     android:orientation="vertical"
     >
 
-    <LinearLayout
-        android:id="@+id/headerLinearLayout"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/headerConstraintLayout"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@drawable/background_top"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="100dp">
+
+        <ImageView
+            android:id="@+id/coverPhotoImgView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/background_top"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/headerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="Create Path"
             android:textColor="#fff"
             android:textSize="32sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.292" />
+
+        <Button
+            android:id="@+id/coverPhotoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/ic_add_a_photo_white_24dp"
+            android:text="  Add cover image"
+            android:textColor="#fff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.966"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/headerTitle"
+            app:layout_constraintVertical_bias="1.0" />
+    </android.support.constraint.ConstraintLayout>
 
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/submitData"
-        android:layout_below="@+id/headerLinearLayout">
+        android:layout_below="@+id/headerConstraintLayout"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerConstraintLayout"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp">
 
         <EditText
             android:id="@+id/postTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textSize="18sp"
             android:ems="10"
             android:hint="Care to pick a title?"
             android:inputType="textPersonName"
@@ -50,6 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textSize="18sp"
             android:ems="10"
             android:hint="Where was this?"
             android:inputType="textPersonName"
@@ -64,10 +112,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:clickable="true"
-            android:focusable="false"
-            android:inputType="none"
+            android:textSize="18sp"
             android:ems="10"
+            android:focusable="false"
             android:hint="When did you travel? "
+            android:inputType="none"
             app:layout_constraintBottom_toTopOf="@+id/postNrTravelers"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -80,6 +129,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:ems="10"
+            android:textSize="18sp"
             android:hint="Number of days?"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -90,13 +140,22 @@
 
     <Button
         android:id="@+id/submitData"
-        android:layout_width="160dp"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/reg_btn_style"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/next_btn_style"
+        android:paddingLeft="35dp"
+        android:text="Continue"
+        android:textAlignment="textStart"
         android:textColor="#ffffff"
-        android:layout_marginBottom="48dp"
-        android:text="Continue" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintVertical_bias="0.84" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.example.marius.path.user_data;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.database.Exclude;
@@ -12,33 +13,32 @@ public class PostData implements Serializable{
     public String creationDate;
     public String userId;
     public String postText;
-
-
+    public String coverImg;
 
     public PostData(){}
 
-    public PostData(String userId, String title, String location, String date, String nrDays, String creationDate) {
+    public PostData(String userId, String title, String location, String date, String nrDays,
+                    String creationDate, String coverImg){
         this.userId = userId;
         this.title = title;
         this.location = location;
         this.travelDate = date;
         this.nrDays = nrDays;
         this.creationDate = creationDate;
+        this.coverImg = "";
     }
 
-//    @Exclude
-//    public void addPostContent(PostContent postContent){
-//        contents.add(postContent);
-//    }
+    public String getCoverImg() {
+        return coverImg;
+    }
+
+    public void setCoverImg(String coverImg) {
+        this.coverImg = coverImg;
+    }
 
     public void setPostText(String postText) {
         this.postText = postText;
     }
-
-//    @Exclude
-//    public ArrayList<PostContent> getPostContent(){
-//        return this.contents;
-//    }
 
     public void printContent(){
         System.out.println(this.toString());

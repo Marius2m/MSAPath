@@ -1,10 +1,6 @@
 package com.example.marius.path.data_model;
 
-import com.example.marius.path.user_data.PostContent;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class IndividualPost implements Serializable {
     private String title;
@@ -14,17 +10,18 @@ public class IndividualPost implements Serializable {
     private String creationDate;
     private String travelDate;
     private String nrDays;
-    private String thumbnail;
+    private String coverImg;
 
     public IndividualPost(){}
 
-    public IndividualPost(String creationDate, String travelDate, String location, String nrDays, String title, String userId) {
+    public IndividualPost(String creationDate, String travelDate, String location, String nrDays, String title, String userId, String coverImg) {
         this.creationDate = creationDate;
         this.location = location;
         this.travelDate = travelDate;
         this.nrDays = nrDays;
         this.title = title;
         this.userId = userId;
+        this.coverImg = coverImg;
     }
 
     @Override
@@ -37,7 +34,7 @@ public class IndividualPost implements Serializable {
                 ", creationDate='" + creationDate + '\'' +
                 ", travelDate='" + travelDate + '\'' +
                 ", nrDays='" + nrDays + '\'' +
-                ", thumbnail='" + thumbnail + '\'' +
+                ", coverImg='" + coverImg + '\'' +
                 '}';
     }
 
@@ -49,12 +46,12 @@ public class IndividualPost implements Serializable {
         this.postId = postId;
     }
 
-    public String getThumbnail() {
-        return thumbnail;
+    public String getCoverImg() {
+        return coverImg;
     }
 
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
+    public void setCoverImg(String coverImg) {
+        this.coverImg = coverImg;
     }
 
     public String getCreationDate() {
