@@ -15,4 +15,8 @@ public class PostContents implements Serializable {
     public void setPostContents(ArrayList<PostContent> postContents) {
         this.postContents = postContents;
     }
+
+    public void addPostContent(PostContent postContent){
+        postContents.add(postContent);
+    }
 }

@@ -1,10 +1,17 @@
 package com.example.marius.path.user_data;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.ArrayList;
+
 public class UserAccount {
     public String name;
     public int age;
     public String dateCreated;
     public String email;
+
+    @Exclude
+    public ArrayList<String> postsIds = new ArrayList<>();
 
     public UserAccount(){}
 
@@ -14,6 +21,24 @@ public class UserAccount {
         this.email = email;
 
         this.age = 18;
+    }
+
+    public UserAccount(String name, String dateCreated, String email, ArrayList<String> postsIds){
+        this.name = name;
+        this.dateCreated = dateCreated;
+        this.email = email;
+        this.postsIds = postsIds;
+
+        this.age = 18;
+    }
+
+    @Exclude
+    public ArrayList<String> getPostsIds() {
+        return postsIds;
+    }
+
+    public void setPostsIds(ArrayList<String> postsIds) {
+        this.postsIds = postsIds;
     }
 
     public String getName() {

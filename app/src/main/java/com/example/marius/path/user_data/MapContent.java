@@ -17,6 +17,9 @@ public class MapContent extends PostContent {
         this.map = map;
     }
 
+    public MapContent(){
+    }
+
     public MapContent(String map){
         this.map = map;
     }
