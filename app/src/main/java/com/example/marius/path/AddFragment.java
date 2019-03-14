@@ -171,8 +171,14 @@ public class AddFragment extends Fragment {
         PostDataFragment postDataFragment = new PostDataFragment();
         postDataFragment.setArguments(bundleArgs);
 
-        FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
-        fragmentT.replace(R.id.fragment_container, postDataFragment).commit();
+
+        getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, 0, 0)
+                .replace(R.id.fragment_container, postDataFragment).commit();
+
+//        FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
+//        fragmentT.replace(R.id.fragment_container, postDataFragment).commit();
 
         //Toast.makeText(getActivity(), postTitle.getText().toString(), Toast.LENGTH_SHORT).show();
     }
