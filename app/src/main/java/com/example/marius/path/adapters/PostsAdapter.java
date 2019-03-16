@@ -2,6 +2,7 @@ package com.example.marius.path.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.example.marius.path.R;
 import com.example.marius.path.SinglePostActivity;
 import com.example.marius.path.data_model.IndividualPost;
+import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -30,6 +32,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
         public ImageView thumbnail;
         public TextView location, author, postThumbnailTitle;
         public CardView cardView;
+        public ImageView coverImg;
 
         public CustomViewHolder(View view){
             super(view);
@@ -37,6 +40,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
             author = (TextView) view.findViewById(R.id.authorPost);
             postThumbnailTitle = (TextView) view.findViewById(R.id.postThumbnailTitle);
             cardView = (CardView) view.findViewById(R.id.cardPostView);
+            coverImg = view.findViewById(R.id.coverImg);
         }
     }
 
@@ -64,12 +68,18 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
         String date = DateFormat.format("dd MMM yyyy", cal).toString();
         holder.author.setText(date);
         holder.postThumbnailTitle.setText(post.getTitle());
+//        Picasso.get()
+//                .load(Uri.parse(post.getCoverImg()))
+//                .centerCrop()
+//                .fit()
+//                .into(holder.coverImg);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), SinglePostActivity.class);
 
+                System.out.println("SENDING TO NEW PAGE:" + post.toString());
                 i.putExtra("postObject",(Serializable) post);
 
                 context.startActivity(i);

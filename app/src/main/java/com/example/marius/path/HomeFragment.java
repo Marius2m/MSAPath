@@ -134,6 +134,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final IndividualPost indivPost = dataSnapshot.getValue(IndividualPost.class);
+                indivPost.setPostId(postsIds.get(currentPost - 1));
                 posts.add(indivPost);
                 ++nrPostsDownloaded;
 
