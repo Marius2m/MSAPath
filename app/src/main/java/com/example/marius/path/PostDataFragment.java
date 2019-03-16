@@ -81,6 +81,7 @@ public class PostDataFragment extends Fragment {
     private int index = 0;
     private String path;
     private boolean havePictures = false;
+    private String userKey;
 
     public PostData postData;
     private ArrayList<Uri> pictureUris = new ArrayList<Uri>();
@@ -220,7 +221,7 @@ public class PostDataFragment extends Fragment {
             public void onClick(View v) {
 
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                final String userKey = firebaseUser.getUid();
+                userKey = firebaseUser.getUid();
                 Log.d("userKey", userKey);
 
                 postKey = mDatabase.child("posts").push().getKey();
@@ -428,6 +429,9 @@ public class PostDataFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        Log.d("[userKey]", userKey);
+                        String key = mDatabase.child("users").child(userKey).child("posts").push().getKey();
+                        mDatabase.child("users").child(userKey).child("posts").child(key).setValue(postKey);
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {

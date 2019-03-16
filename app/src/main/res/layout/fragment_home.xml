@@ -38,7 +38,7 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="64dp"
             android:layout_marginBottom="8dp"
-            android:text="Marius Mircea"
+            android:text=""
             android:textColor="#fff"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -81,7 +81,7 @@
                 android:id="@+id/home_linearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:weightSum="2">
+                android:weightSum="0">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -102,7 +102,7 @@
                         android:id="@+id/nr_of_paths"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="6"
+                        android:text="0"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -126,7 +126,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingBottom="2dp"
-                        android:text="43"
+                        android:text="5"
                         android:textSize="16sp" />
                 </LinearLayout>
 
