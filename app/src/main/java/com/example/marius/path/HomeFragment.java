@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +24,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
     private View v;
-    private TextView Nr_of_paths, nr_hearts, home_headerTitle;
+    private TextView nr_of_paths, nr_hearts, home_headerTitle;
     private RecyclerView recyclerView;
     private PostsAdapter mAdapter;
 
@@ -58,7 +57,7 @@ public class HomeFragment extends Fragment {
         recyclerView = (RecyclerView) v.findViewById(R.id.home_recyclerView2);
         mAdapter = new PostsAdapter(posts);
 
-        Nr_of_paths = (TextView) v.findViewById(R.id.nr_of_paths);
+        nr_of_paths = (TextView) v.findViewById(R.id.nr_of_paths);
         nr_hearts = (TextView) v.findViewById(R.id.nr_hearts);
         home_headerTitle = (TextView) v.findViewById(R.id.home_headerTitle);
 
@@ -115,9 +114,8 @@ public class HomeFragment extends Fragment {
                     for (DataSnapshot post : it) {
                         postsIds.add(post.getValue().toString());
                     }
-                    Nr_of_paths.setText(postsIds.size() + "");
+                    nr_of_paths.setText(String.valueOf(postsIds.size()));
                     home_headerTitle.setText(userName);
-
                     initialPopulation();
                 }
             }
