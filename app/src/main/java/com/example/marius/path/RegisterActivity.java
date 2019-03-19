@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import java.util.Date;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText regName, regMail, regPassword, regPassword2;
+    private ImageView selectAvatarPicture;
     private Button regBtn;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
@@ -53,6 +55,15 @@ public class RegisterActivity extends AppCompatActivity {
 
         regBtn = (Button) findViewById(R.id.login_btn);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        selectAvatarPicture = findViewById(R.id.selectAvatarPicture);
+        selectAvatarPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("TAGG", " click");
+
+            }
+        });
 
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
