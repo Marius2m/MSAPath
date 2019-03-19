@@ -9,6 +9,7 @@ public class UserAccount {
     public int age;
     public String dateCreated;
     public String email;
+    public String profilePictureUrl;
 
     @Exclude
     public ArrayList<String> postsIds = new ArrayList<>();
@@ -53,6 +54,14 @@ public class UserAccount {
         return age;
     }
 
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
     public void setAge(int age) {
         this.age = age;
     }
@@ -67,6 +76,18 @@ public class UserAccount {
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public String toString() {
+        return "UserAccount{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", dateCreated='" + dateCreated + '\'' +
+                ", email='" + email + '\'' +
+                ", profilePictureUrl='" + profilePictureUrl + '\'' +
+                ", postsIds=" + postsIds +
+                '}';
     }
 
     public void setEmail(String email) {
