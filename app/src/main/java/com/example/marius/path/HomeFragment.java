@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marius.path.PicassoTransformations.CircleTransform;
 import com.example.marius.path.adapters.PostsAdapter;
 import com.example.marius.path.data_model.IndividualPost;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ public class HomeFragment extends Fragment {
     private TextView nr_of_paths, nr_hearts, home_headerTitle;
     private RecyclerView recyclerView;
     private PostsAdapter mAdapter;
+    private ImageView home_avatar;
 
     int visibleItemCount = 0;
     int totalItemCount = 0;
@@ -60,6 +64,7 @@ public class HomeFragment extends Fragment {
         nr_of_paths = (TextView) v.findViewById(R.id.nr_of_paths);
         nr_hearts = (TextView) v.findViewById(R.id.nr_hearts);
         home_headerTitle = (TextView) v.findViewById(R.id.home_headerTitle);
+        home_avatar = v.findViewById(R.id.home_avatar);
 
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -108,14 +113,25 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String userName = dataSnapshot.child("name").getValue(String.class);
+                home_headerTitle.setText(userName);
 
+                if(dataSnapshot.child("profilePictureUrl").getValue(String.class) != null) {
+                    Picasso.get()
+                            .load(dataSnapshot.child("profilePictureUrl").getValue(String.class))
+                            .placeholder(home_avatar.getDrawable())
+                            .centerCrop()
+                            .fit()
+                            .transform(new CircleTransform())
+                            .into(home_avatar);
+                }
                 if(dataSnapshot.child("posts").getValue() != null) {
                     Iterable<DataSnapshot> it = dataSnapshot.child("posts").getChildren();
                     for (DataSnapshot post : it) {
                         postsIds.add(post.getValue().toString());
                     }
+
                     nr_of_paths.setText(String.valueOf(postsIds.size()));
-                    home_headerTitle.setText(userName);
+
                     initialPopulation();
                 }
             }
