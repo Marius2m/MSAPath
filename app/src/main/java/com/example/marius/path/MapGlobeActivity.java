@@ -18,14 +18,23 @@ package com.example.marius.path;
 
 
 import com.example.marius.path.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * This shows how to create a simple activity with a raw MapView and add a marker to it. This
@@ -34,6 +43,9 @@ import android.support.v7.app.AppCompatActivity;
 public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private MapView mMapView;
+    private TextView textView4;
+    private Button showPathsFromHere;
+    GoogleMap mapObj;
 
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
@@ -54,7 +66,15 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
 
         mMapView.getMapAsync(this);
 
-        System.out.println("Hello babys!");
+        textView4 = findViewById(R.id.textView4);
+        showPathsFromHere = findViewById(R.id.showPathsFromHere);
+
+        showPathsFromHere.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textView4.setText("Latitudine: " + mapObj.getCameraPosition().target.latitude);
+            }
+        });
     }
 
     @Override
@@ -90,7 +110,29 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap map) {
-        map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        mapObj = map;
+//        map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return;
+//        }
+//        map.setMyLocationEnabled(true);
+        LatLng sydney = new LatLng(-34, 151);
+        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+
+        LatLng xa = new LatLng(-32, 150);
+        map.addMarker(new MarkerOptions().position(xa).title("Marker in Xa"));
+
+        LatLng x2;
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        GPSTracker gps = new GPSTracker(this);
+        if(gps.canGetLocation()){
+            x2 = new LatLng(gps.getLatitude(), gps.getLongitude());
+            map.addMarker(new MarkerOptions().position(x2).title("BITCH"));
+            map.moveCamera(CameraUpdateFactory.newLatLng(x2));
+
+        }else {
+            map.moveCamera(CameraUpdateFactory.newLatLng(xa));
+        }
     }
 
     @Override
