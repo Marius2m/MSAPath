@@ -17,20 +17,21 @@ package com.example.marius.path;
  */
 
 
-import com.example.marius.path.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -43,9 +44,10 @@ import android.widget.TextView;
 public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private MapView mMapView;
-    private TextView textView4;
+    private TextView textView4, textView5;
     private Button showPathsFromHere;
     GoogleMap mapObj;
+    Circle mapCircle;
 
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
@@ -67,12 +69,53 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         mMapView.getMapAsync(this);
 
         textView4 = findViewById(R.id.textView4);
+        textView5 = findViewById(R.id.textView5);
         showPathsFromHere = findViewById(R.id.showPathsFromHere);
 
         showPathsFromHere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textView4.setText("Latitudine: " + mapObj.getCameraPosition().target.latitude);
+
+                if(mapCircle != null){
+                    mapCircle.remove();
+                }
+
+                textView4.setText(mapObj.getCameraPosition().toString());
+
+                VisibleRegion visibleRegion = mapObj.getProjection().getVisibleRegion();
+
+                float[] distanceWidth = new float[1];
+                float[] distanceHeight = new float[1];
+
+                LatLng farRight = visibleRegion.farRight;
+                LatLng farLeft = visibleRegion.farLeft;
+                LatLng nearRight = visibleRegion.nearRight;
+                LatLng nearLeft = visibleRegion.nearLeft;
+
+                Location.distanceBetween(
+                        (farLeft.latitude + nearLeft.latitude) / 2,
+                        farLeft.longitude,
+                        (farRight.latitude + nearRight.latitude) / 2,
+                        farRight.longitude,
+                        distanceWidth
+                );
+
+                Location.distanceBetween(
+                        farRight.latitude,
+                        (farRight.longitude + farLeft.longitude) / 2,
+                        nearRight.latitude,
+                        (nearRight.longitude + nearLeft.longitude) / 2,
+                        distanceHeight
+                );
+
+                double radiusInMeters = Math.sqrt(Math.pow(distanceWidth[0], 2) + Math.pow(distanceHeight[0], 2)) / 2;
+                mapCircle = mapObj.addCircle(new CircleOptions()
+                        //.center(new LatLng(latitude, longitude))
+                        .center(mapObj.getCameraPosition().target)
+                        .radius(radiusInMeters/2)
+                        .strokeColor(0xFF303F9F)
+                        .fillColor(Color.argb(70, 61, 81,181)));
+                textView5.setText(Double.toString(radiusInMeters/2));
             }
         });
     }
@@ -127,7 +170,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         GPSTracker gps = new GPSTracker(this);
         if(gps.canGetLocation()){
             x2 = new LatLng(gps.getLatitude(), gps.getLongitude());
-            map.addMarker(new MarkerOptions().position(x2).title("BITCH"));
+            map.addMarker(new MarkerOptions().position(x2).title("HELLO!!!!"));
             map.moveCamera(CameraUpdateFactory.newLatLng(x2));
 
         }else {
