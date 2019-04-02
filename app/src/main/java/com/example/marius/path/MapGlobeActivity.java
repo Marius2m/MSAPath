@@ -26,16 +26,30 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.FirebaseFunctionsException;
+import com.google.firebase.functions.HttpsCallableResult;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This shows how to create a simple activity with a raw MapView and add a marker to it. This
@@ -49,6 +63,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
     GoogleMap mapObj;
     Circle mapCircle;
 
+    private FirebaseFunctions mFunctions;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     @Override
@@ -67,6 +82,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         mMapView.onCreate(mapViewBundle);
 
         mMapView.getMapAsync(this);
+        mFunctions = FirebaseFunctions.getInstance();
 
         textView4 = findViewById(R.id.textView4);
         textView5 = findViewById(R.id.textView5);
@@ -116,8 +132,81 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                         .strokeColor(0xFF303F9F)
                         .fillColor(Color.argb(70, 61, 81,181)));
                 textView5.setText(Double.toString(radiusInMeters/2));
+
+                String text = "mariusTest";
+                Map<String, Object> data = new HashMap<>();
+                data.put("text", "Hi Firebase!");
+
+                addNumbers(3,5)
+                        .addOnCompleteListener(new OnCompleteListener<Integer>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Integer> task) {
+                                if (!task.isSuccessful()) {
+                                    Exception e = task.getException();
+                                    if (e instanceof FirebaseFunctionsException) {
+                                        FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+
+                                        // Function error code, will be INTERNAL if the failure
+                                        // was not handled properly in the function call.
+                                        FirebaseFunctionsException.Code code = ffe.getCode();
+
+                                        // Arbitrary error details passed back from the function,
+                                        // usually a Map<String, Object>.
+                                        Object details = ffe.getDetails();
+                                    }
+
+                                    // [START_EXCLUDE]
+                                    Log.d("SOME", "addNumbers:onFailure", e);
+                                    return;
+                                    // [END_EXCLUDE]
+                                }
+
+                                // [START_EXCLUDE]
+                                Integer result = task.getResult();
+                                Log.d("SOME2",String.valueOf(result));
+                                // [END_EXCLUDE]
+                            }
+                        });
+
+//                FirebaseFunctions.getInstance()
+//                        .getHttpsCallable("helloWorld")
+//                        .call(data)
+//                        .continueWith(new Continuation<HttpsCallableResult, String>() {
+//                            @Override
+//                            public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+//                                // This continuation runs on either success or failure, but if the task
+//                                // has failed then getResult() will throw an Exception which will be
+//                                // propagated down.
+//                                String result = (String) task.getResult().getData();
+//                                Log.d("SUCCCES:", result);
+//                                return result;
+//                            }
+//                        });
+
             }
         });
+    }
+
+    private Task<Integer> addNumbers(int a, int b) {
+        // Create the arguments to the callable function, which are two integers
+        Map<String, Object> data = new HashMap<>();
+        data.put("firstNumber", a);
+        data.put("secondNumber", b);
+
+        // Call the function and extract the operation from the result
+        return mFunctions
+                .getHttpsCallable("addNumbers")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, Integer>() {
+                    @Override
+                    public Integer then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        // This continuation runs on either success or failure, but if the task
+                        // has failed then getResult() will throw an Exception which will be
+                        // propagated down.
+                        Map<String, Object> result = (Map<String, Object>) task.getResult().getData();
+                        return (Integer) result.get("operationResult");
+                    }
+                });
     }
 
     @Override
