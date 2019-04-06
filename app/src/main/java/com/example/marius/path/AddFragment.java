@@ -4,13 +4,11 @@ import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,16 +19,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.marius.path.user_data.PostData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -64,7 +59,7 @@ public class AddFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_add, container, false);
 
         postTitle = (EditText) v.findViewById(R.id.postTitle);
-        postLocation = (EditText) v.findViewById(R.id.postLocation);
+        postLocation = v.findViewById(R.id.postLocation);
         postDate = (EditText) v.findViewById(R.id.postDate);
         postNrOfTravelers = (EditText) v.findViewById(R.id.postNrTravelers);
         coverPhotoBtn = (Button) v.findViewById(R.id.coverPhotoBtn);
@@ -88,6 +83,15 @@ public class AddFragment extends Fragment {
                 new DatePickerDialog(getContext(), date,
                         myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        postLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Tapped", Toast.LENGTH_SHORT).show();
+                postLocation.setText("Romania!!!");
+                System.out.println("Tapped Where was this");
             }
         });
 

@@ -99,8 +99,10 @@
             android:layout_marginTop="10dp"
             android:textSize="18sp"
             android:ems="10"
+            android:clickable="true"
+            android:focusable="false"
+            android:inputType="none"
             android:hint="Where was this?"
-            android:inputType="textPersonName"
             app:layout_constraintBottom_toTopOf="@+id/postDate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -136,6 +138,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/postDate" />
+
     </android.support.constraint.ConstraintLayout>
 
     <Button
