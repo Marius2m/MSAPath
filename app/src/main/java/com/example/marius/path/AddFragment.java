@@ -215,9 +215,15 @@ public class AddFragment extends Fragment {
                     postNrOfTravelers.requestFocus();
                     return;
                 }*/
-        title="title";
-        location="location";
-        nrDays="5";
+        if(title.isEmpty()) {
+            title = "empty-title";
+        }
+        if(location.isEmpty()) {
+            location = "empty-location";
+        }
+        if(nrDays.isEmpty()) {
+            nrDays = "empty-5";
+        }
 
         Long creationDateLong = System.currentTimeMillis() / 1000;
         String creationDate = "" + creationDateLong;
@@ -225,7 +231,10 @@ public class AddFragment extends Fragment {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final String userKey = firebaseUser.getUid();
         postData = new PostData(userKey, title, location, postDateCalendar , nrDays, creationDate, "");
-        Log.d("addFragmentData", title + " " + location + " " + postDateCalendar + " " + nrDays);
+        postData.setLatitude(Float.parseFloat(latitude));
+        postData.setLongitude(Float.parseFloat(longitude));
+
+        Log.d("post to next page", ":D");
 
         Bundle bundleArgs = new Bundle();
         bundleArgs.putSerializable("PostData", postData);

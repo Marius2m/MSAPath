@@ -1,12 +1,6 @@
 package com.example.marius.path.user_data;
 
-import android.net.Uri;
-import android.util.Log;
-
-import com.google.firebase.database.Exclude;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class PostData implements Serializable{
     public String title, location, travelDate, nrDays;
@@ -14,6 +8,8 @@ public class PostData implements Serializable{
     public String userId;
     public String postText;
     public String coverImg;
+    public Float latitude;
+    public Float longitude;
 
     public PostData(){}
 
@@ -26,6 +22,24 @@ public class PostData implements Serializable{
         this.nrDays = nrDays;
         this.creationDate = creationDate;
         this.coverImg = "";
+        this.latitude = null;
+        this.longitude = null;
+    }
+
+    public Float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+    }
+
+    public Float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
     }
 
     public String getCoverImg() {
