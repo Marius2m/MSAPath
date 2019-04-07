@@ -8,8 +8,8 @@ public class PostData implements Serializable{
     public String userId;
     public String postText;
     public String coverImg;
-    public Float latitude;
-    public Float longitude;
+    public Double latitude;
+    public Double longitude;
 
     public PostData(){}
 
@@ -26,19 +26,19 @@ public class PostData implements Serializable{
         this.longitude = null;
     }
 
-    public Float getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 

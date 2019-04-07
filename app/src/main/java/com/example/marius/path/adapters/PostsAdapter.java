@@ -2,7 +2,6 @@ package com.example.marius.path.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 import com.example.marius.path.R;
 import com.example.marius.path.SinglePostActivity;
 import com.example.marius.path.data_model.IndividualPost;
-import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -64,7 +62,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
         holder.location.setText(post.getLocation() + " in " + post.getNrDays() + " days");
         //holder.author.setText("by " + post.getUserId() + ", " + post.getCreationDate());
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(Integer.parseInt(post.getCreationDate()));
+        cal.setTimeInMillis(post.getCreationDate());
         String date = DateFormat.format("dd MMM yyyy", cal).toString();
         holder.author.setText(date);
         holder.postThumbnailTitle.setText(post.getTitle());

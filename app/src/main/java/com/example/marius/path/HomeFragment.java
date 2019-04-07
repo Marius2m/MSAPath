@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -206,20 +205,20 @@ public class HomeFragment extends Fragment {
 //    }
 
     private void populatePostsMockData_1(){
-        posts.add(new IndividualPost("1547220397", "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "xD"));
-        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_1", "5","Venice", "Marius Mircea", "ASDADSA"));
-        posts.add(new IndividualPost("1547220397", "15 MAR 2019", "MOCK_DATA_2", "3","Francee", "Karina Ciupa", "ASDAD"));
-        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor", "XXD"));
-        posts.add(new IndividualPost("1547220397", "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "xD"));
-        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_1", "5","Venice", "Marius Mircea", "ASDADSA"));
-        posts.add(new IndividualPost("1547220397", "15 MAR 2019", "MOCK_DATA_2", "3","Francee", "Karina Ciupa", "ASDAD"));
-        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor", "XXD"));
-        posts.add(new IndividualPost("1547220397", "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "xD"));
-        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "10 10 10 10", "5","Venice", "Marius Mircea", "ASDADSA"));
+        posts.add(new IndividualPost(new Long(1547220397), "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "xD"));
+        posts.add(new IndividualPost(new Long(1547220397), "13 FEB 2019", "MOCK_DATA_1", "5","Venice", "Marius Mircea", "ASDADSA"));
+        posts.add(new IndividualPost(new Long(1547220397), "15 MAR 2019", "MOCK_DATA_2", "3","Francee", "Karina Ciupa", "ASDAD"));
+        posts.add(new IndividualPost(new Long(1547220397), "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor", "XXD"));
+        posts.add(new IndividualPost(new Long(1547220397), "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "xD"));
+        posts.add(new IndividualPost(new Long(1547220397), "13 FEB 2019", "MOCK_DATA_1", "5","Venice", "Marius Mircea", "ASDADSA"));
+        posts.add(new IndividualPost(new Long(1547220397), "15 MAR 2019", "MOCK_DATA_2", "3","Francee", "Karina Ciupa", "ASDAD"));
+        posts.add(new IndividualPost(new Long(1547220397), "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor", "XXD"));
+        posts.add(new IndividualPost(new Long(1547220397), "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "xD"));
+        posts.add(new IndividualPost(new Long(1547220397), "13 FEB 2019", "10 10 10 10", "5","Venice", "Marius Mircea", "ASDADSA"));
 
     }
     private void populatePostsMockData_2(){
-        posts.add(new IndividualPost("1547220397", "09 APR 2018", "FAKEEEEEEEE", "5", "BeautifulMan", "11414fff", "xD"));
+        posts.add(new IndividualPost(new Long(1547220397), "09 APR 2018", "FAKEEEEEEEE", "5", "BeautifulMan", "11414fff", "xD"));
         isLoading = false;
     }
 

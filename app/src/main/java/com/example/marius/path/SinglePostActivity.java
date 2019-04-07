@@ -176,7 +176,7 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         parentRLayout.addView(constraintLayoutBottomSection);
 
         userNamePost.setText(userName + ",");
-        creationDatePost.setText(getFormattedTextDate(postData.getCreationDate()));
+        creationDatePost.setText(getFormattedTextDate(postData.getCreationDate().toString()));
 
     }
 

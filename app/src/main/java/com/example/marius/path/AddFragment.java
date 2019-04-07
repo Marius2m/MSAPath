@@ -69,6 +69,7 @@ public class AddFragment extends Fragment {
 
     private PostData postData = null;
 
+    private boolean haveCoverPhoto = false;
     private String location = "";
     private String longitude = "";
     private String latitude = "";
@@ -77,7 +78,7 @@ public class AddFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add, container, false);
 
         postTitle = (EditText) v.findViewById(R.id.postTitle);
@@ -88,8 +89,6 @@ public class AddFragment extends Fragment {
         headerConstraintLayout = (ConstraintLayout) v.findViewById(R.id.headerConstraintLayout);
         coverPhotoImgView = (ImageView) v.findViewById(R.id.coverPhotoImgView);
         headerTitle = (TextView) v.findViewById(R.id.headerTitle);
-
-        //START
 
 
         String apiKey = "AIzaSyD7TC1decqiw1iKCFjaoggsraaruxTXtPE";
@@ -124,8 +123,6 @@ public class AddFragment extends Fragment {
         typeFilterSpinner.setEnabled(false);
 
 
-
-        ////DONE
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -144,15 +141,6 @@ public class AddFragment extends Fragment {
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-
-//        postLocation.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(getActivity(), "Tapped", Toast.LENGTH_SHORT).show();
-//                postLocation.setText("Romania!!!");
-//                System.out.println("Tapped Where was this");
-//            }
-//        });
 
 
         /*nextPageBtn = (Button) v.findViewById(R.id.nextPage);
@@ -195,44 +183,51 @@ public class AddFragment extends Fragment {
         String date = postDate.getText().toString().trim();
         String nrDays = postNrOfTravelers.getText().toString().trim();
 
-                /*if(title.isEmpty()){
-                    postTitle.setError("A title is required");
-                    postTitle.requestFocus();
-                    return;
-                }
-                if(location.isEmpty()){
-                    postLocation.setError("Location is required");
-                    postLocation.requestFocus();
-                    return;
-                }
-                /*if(date.isEmpty()){
-                    postDate.setError("Date is required");
-                    postDate.requestFocus();
-                    return;
-                }//
-                if(nrDays.isEmpty()){
-                    postNrOfTravelers.setError("Number of travelers is required");
-                    postNrOfTravelers.requestFocus();
-                    return;
-                }*/
-        if(title.isEmpty()) {
-            title = "empty-title";
+//        if (title.isEmpty()) {
+//            title = "empty-title";
+//        }
+//        if (nrDays.isEmpty()) {
+//            nrDays = "empty-5";
+//        }
+
+        if(!haveCoverPhoto){
+            Toast.makeText(getContext(),"Cover is required", Toast.LENGTH_SHORT).show();
+            return;
         }
-        if(location.isEmpty()) {
-            location = "empty-location";
+        if (title.isEmpty()) {
+            Toast.makeText(getContext(),"Title is required", Toast.LENGTH_SHORT).show();
+            postTitle.setError("A title is required");
+            postTitle.requestFocus();
+            return;
         }
-        if(nrDays.isEmpty()) {
-            nrDays = "empty-5";
+        if (location.isEmpty()) {
+            Toast.makeText(getContext(),"Location is required", Toast.LENGTH_SHORT).show();
+            postLocation.setError("Location is required");
+            postLocation.requestFocus();
+            return;
         }
+        if (date.isEmpty()) {
+            Toast.makeText(getContext(),"Date is required", Toast.LENGTH_SHORT).show();
+            postDate.setError("Date is required");
+            postDate.requestFocus();
+            return;
+        }
+        if (nrDays.isEmpty()) {
+            Toast.makeText(getContext(),"Number of is required", Toast.LENGTH_SHORT).show();
+            postNrOfTravelers.setError("Number of days is required");
+            postNrOfTravelers.requestFocus();
+            return;
+        }
+
 
         Long creationDateLong = System.currentTimeMillis() / 1000;
         String creationDate = "" + creationDateLong;
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final String userKey = firebaseUser.getUid();
-        postData = new PostData(userKey, title, location, postDateCalendar , nrDays, creationDate, "");
-        postData.setLatitude(Float.parseFloat(latitude));
-        postData.setLongitude(Float.parseFloat(longitude));
+        postData = new PostData(userKey, title, location, postDateCalendar, nrDays, creationDate, "");
+        postData.setLatitude(Double.parseDouble(latitude));
+        postData.setLongitude(Double.parseDouble(longitude));
 
         Log.d("post to next page", ":D");
 
@@ -255,19 +250,20 @@ public class AddFragment extends Fragment {
         //Toast.makeText(getActivity(), postTitle.getText().toString(), Toast.LENGTH_SHORT).show();
     }
 
-    private void updateTextDate(){
+    private void updateTextDate() {
         String dateFormat = "dd MMM yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat, Locale.UK);
 
         postDateCalendar = simpleDateFormat.format(myCalendar.getTime());
         postDate.setText(postDateCalendar);
+        postDate.setError(null);
     }
 
-    private String getFileExtension(Uri uri){
+    private String getFileExtension(Uri uri) {
         return mime.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
-    private void chosePicture(){
+    private void chosePicture() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -293,6 +289,7 @@ public class AddFragment extends Fragment {
                         .centerCrop()
                         .fit()
                         .into(coverPhotoImgView);
+                haveCoverPhoto = true;
             }
         }
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
@@ -315,14 +312,14 @@ public class AddFragment extends Fragment {
             super.onActivityResult(requestCode, resultCode, data);
         }
 
-     }
+    }
 
     private void setLocationField(String locationData) {
-        String regex = "address=([A-Za-z,\\u00BF-\\u1FFF\\u2C00-\\uD7FF\\w -]*)attributions[a-zA-Z =\\[\\],0-9-]*lat/lng:\\W*([0-9\\.]*),([0-9\\.]*)";
+        String regex = "address=([A-Za-z,\\u00BF-\\u1FFF\\u2C00-\\uD7FF\\w -]*)attributions[a-zA-Z =\\[\\],0-9-_]*lat/lng:\\W*([-0-9\\.]*),([-0-9\\.]*)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(locationData);
 
-        while(matcher.find()) {
+        while (matcher.find()) {
             location = matcher.group(1);
             longitude = matcher.group(2);
             latitude = matcher.group(3);
@@ -331,16 +328,18 @@ public class AddFragment extends Fragment {
         location = location.replaceAll(" ", "");
         String[] res = location.split(",");
 
-        if(res.length >= 2) {
+        if (res.length >= 2) {
             city = res[res.length - 2];
             country = res[res.length - 1];
             System.out.println(city);
             System.out.println(country);
             postLocation.setText(city + ", " + country);
-        }else if(res.length == 1) {
+            postLocation.setError(null);
+        } else if (res.length == 1) {
             country = res[res.length - 1];
             System.out.println(country);
             postLocation.setText(country);
+            postLocation.setError(null);
         }
     }
 

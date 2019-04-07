@@ -19,7 +19,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
@@ -51,9 +50,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -320,7 +317,7 @@ public class PostDataFragment extends Fragment {
                 picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Log.d("BITCH", uri.toString() + "\n" + "postKey:" + postKey);
+                        Log.d("999", uri.toString() + "\n" + "postKey:" + postKey);
                         postData.setCoverImg(uri.toString());
                         uploadPictures(pictureUris);
                     }

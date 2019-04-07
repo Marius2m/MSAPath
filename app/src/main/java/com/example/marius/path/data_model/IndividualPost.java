@@ -7,14 +7,14 @@ public class IndividualPost implements Serializable {
     private String location;
     private String userId;
     private String postId;
-    private String creationDate;
+    private Long creationDate;
     private String travelDate;
     private String nrDays;
     private String coverImg;
 
     public IndividualPost(){}
 
-    public IndividualPost(String creationDate, String travelDate, String location, String nrDays, String title, String userId, String coverImg) {
+    public IndividualPost(Long creationDate, String travelDate, String location, String nrDays, String title, String userId, String coverImg) {
         this.creationDate = creationDate;
         this.location = location;
         this.travelDate = travelDate;
@@ -54,11 +54,11 @@ public class IndividualPost implements Serializable {
         this.coverImg = coverImg;
     }
 
-    public String getCreationDate() {
+    public Long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
 
