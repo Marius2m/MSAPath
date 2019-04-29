@@ -3,18 +3,18 @@ package com.example.marius.path.data_model;
 import java.io.Serializable;
 
 public class IndividualPost implements Serializable {
-    private String title;
-    private String location;
-    private String userId;
+    private String title; //5
+    private String location; //3
+    private String userId; //7
     private String postId;
-    private Long creationDate;
-    private String travelDate;
-    private String nrDays;
-    private String coverImg;
+    private String creationDate; //2
+    private String travelDate; //6
+    private String nrDays; //4
+    private String coverImg; //1
 
     public IndividualPost(){}
 
-    public IndividualPost(Long creationDate, String travelDate, String location, String nrDays, String title, String userId, String coverImg) {
+    public IndividualPost(String creationDate, String travelDate, String location, String nrDays, String title, String userId, String coverImg) {
         this.creationDate = creationDate;
         this.location = location;
         this.travelDate = travelDate;
@@ -54,11 +54,11 @@ public class IndividualPost implements Serializable {
         this.coverImg = coverImg;
     }
 
-    public Long getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
