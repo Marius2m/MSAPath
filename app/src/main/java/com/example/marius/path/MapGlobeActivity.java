@@ -17,6 +17,24 @@ package com.example.marius.path;
  */
 
 
+import android.content.Context;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.marius.path.adapters.GlobePostsAdapter;
+import com.example.marius.path.data_model.IndividualPost;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -28,27 +46,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 import com.google.firebase.functions.HttpsCallableResult;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,6 +67,21 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
     private Button showPathsFromHere;
     GoogleMap mapObj;
     Circle mapCircle;
+
+    int visibleItemCount = 0;
+    int totalItemCount = 0;
+    int pastVisibleItem = 0;
+    boolean isLoading = false;
+
+    private RecyclerView recyclerView;
+    private GlobePostsAdapter mAdapter;
+
+    private List<IndividualPost> posts = new ArrayList<>();
+    private List<String> postsIds = new ArrayList<>();
+    private static final int NR_POSTS_TO_DOWNLOAD = 3;
+    private String userId;
+    private int currentPost = 0;
+    private int nrPostsDownloaded = 0;
 
     private FirebaseFunctions mFunctions;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -87,6 +107,14 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         textView4 = findViewById(R.id.textView4);
         textView5 = findViewById(R.id.textView5);
         showPathsFromHere = findViewById(R.id.showPathsFromHere);
+
+        recyclerView = (RecyclerView) findViewById(R.id.globe_recyclerView);
+        mAdapter = new GlobePostsAdapter(posts);
+
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
 
         showPathsFromHere.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,6 +213,54 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
 
             }
         });
+
+        populatePostsMockData_1();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                Toast.makeText(getApplication(), "Outside IF", Toast.LENGTH_SHORT).show();
+                Log.d("postsIds.size(): ", postsIds.size()+" ");
+                Log.d("currentPost", " "+currentPost);
+                if (dx > 0 && currentPost < 3) {
+//                    Toast.makeText(getApplication(), "Inside IF 1", Toast.LENGTH_SHORT).show();
+                    visibleItemCount = mLayoutManager.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    pastVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+                    if (!isLoading) {
+//                        Toast.makeText(getApplication(), "Inside IF 2", Toast.LENGTH_SHORT).show();
+                        if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
+//                            Toast.makeText(getApplication(), "Inside IF 3", Toast.LENGTH_SHORT).show();
+//
+//                            nrPostsDownloaded = 0;
+//                            if(currentPost < postsIds.size()) {
+                                Toast.makeText(getApplication(), "Inside IF 4", Toast.LENGTH_SHORT).show();
+
+                                isLoading = true;
+                                populatePostsMockData_1();
+
+//                                Toast.makeText(getApplication(), "Loaded some posts", Toast.LENGTH_SHORT).show();
+//                            }else{
+//                                Toast.makeText(getApplication(), "Inside ELSE", Toast.LENGTH_SHORT).show();
+////                                Toast.makeText(getApplication(), "Displayed all posts", Toast.LENGTH_SHORT).show();
+//                            }
+                        }
+                    }
+                }
+
+            }
+        });
+    }
+
+    private void populatePostsMockData_1(){
+        posts.add(new IndividualPost("154722039", "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "https://scontent.ftsr1-2.fna.fbcdn.net/v/t1.0-9/57726577_2302497156476353_893571416266375168_n.jpg?_nc_cat=105&_nc_ht=scontent.ftsr1-2.fna&oh=5d76faa5b6732ffc0bded1e2693a2131&oe=5D2EB124"));
+        posts.add(new IndividualPost("154722039", "15 MAR 2019", "MOCK_DATA_2", "3","Francee", "Karina Ciupa", "https://scontent.ftsr1-2.fna.fbcdn.net/v/t1.0-9/57726577_2302497156476353_893571416266375168_n.jpg?_nc_cat=105&_nc_ht=scontent.ftsr1-2.fna&oh=5d76faa5b6732ffc0bded1e2693a2131&oe=5D2EB124"));
+        posts.add(new IndividualPost("154722039", "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor", "https://scontent.ftsr1-2.fna.fbcdn.net/v/t1.0-9/57726577_2302497156476353_893571416266375168_n.jpg?_nc_cat=105&_nc_ht=scontent.ftsr1-2.fna&oh=5d76faa5b6732ffc0bded1e2693a2131&oe=5D2EB124"));
+        posts.add(new IndividualPost("154722039", "13 FEB 2019", "10 10 10 10", "5","Venice", "Marius Mircea", "https://scontent.ftsr1-2.fna.fbcdn.net/v/t1.0-9/57726577_2302497156476353_893571416266375168_n.jpg?_nc_cat=105&_nc_ht=scontent.ftsr1-2.fna&oh=5d76faa5b6732ffc0bded1e2693a2131&oe=5D2EB124"));
+        isLoading = false;
+        currentPost += 1;
+        mAdapter.notifyDataSetChanged();
+
     }
 
     private Task<Integer> addNumbers(int a, int b) {
