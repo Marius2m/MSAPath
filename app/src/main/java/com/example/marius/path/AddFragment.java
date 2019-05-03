@@ -321,8 +321,8 @@ public class AddFragment extends Fragment {
 
         while (matcher.find()) {
             location = matcher.group(1);
-            longitude = matcher.group(2);
-            latitude = matcher.group(3);
+            latitude = matcher.group(2);
+            longitude = matcher.group(3);
         }
 
         location = location.replaceAll(" ", "");
