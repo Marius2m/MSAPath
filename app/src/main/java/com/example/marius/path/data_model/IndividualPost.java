@@ -11,6 +11,8 @@ public class IndividualPost implements Serializable {
     private String travelDate; //6
     private String nrDays; //4
     private String coverImg; //1
+    private Double latitude;
+    private Double longitude;
 
     public IndividualPost(){}
 
@@ -22,6 +24,18 @@ public class IndividualPost implements Serializable {
         this.title = title;
         this.userId = userId;
         this.coverImg = coverImg;
+    }
+
+    public IndividualPost(Double latitude, Double longitude, String creationDate, String travelDate, String location, String nrDays, String title, String userId, String coverImg) {
+        this.creationDate = creationDate;
+        this.location = location;
+        this.travelDate = travelDate;
+        this.nrDays = nrDays;
+        this.title = title;
+        this.userId = userId;
+        this.coverImg = coverImg;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     @Override
@@ -100,5 +114,21 @@ public class IndividualPost implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }

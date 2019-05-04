@@ -14,7 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
-
+    <!--<android.support.v4.widget.NestedScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
@@ -26,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/map_globe_view" />
-
+    <!--</android.support.v4.widget.NestedScrollView>-->
     <Button
         android:id="@+id/showPathsFromHere"
         android:layout_width="wrap_content"
@@ -56,10 +58,10 @@
         android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.034"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.16" />
+        app:layout_constraintVertical_bias="0.08" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/globe_recyclerView"

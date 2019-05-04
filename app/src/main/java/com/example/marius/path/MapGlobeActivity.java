@@ -19,6 +19,8 @@ package com.example.marius.path;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -27,14 +29,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marius.path.adapters.GlobePostsAdapter;
+import com.example.marius.path.data_model.CommentC;
+import com.example.marius.path.data_model.GlobePosts;
 import com.example.marius.path.data_model.IndividualPost;
+import com.example.marius.path.data_model.Post;
+import com.example.marius.path.services.JsonPlaceholderApi;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -45,16 +50,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.FirebaseFunctionsException;
 import com.google.firebase.functions.HttpsCallableResult;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * This shows how to create a simple activity with a raw MapView and add a marker to it. This
@@ -67,11 +79,18 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
     private Button showPathsFromHere;
     GoogleMap mapObj;
     Circle mapCircle;
+    Double cameraLatitude = 0.0;
+    Double cameraLongitude = 0.0;
+    Double radiusInKm = null;
 
     int visibleItemCount = 0;
     int totalItemCount = 0;
     int pastVisibleItem = 0;
     boolean isLoading = false;
+    boolean coordinatesChanged = false;
+    boolean fetchedCountry = false;
+    String foundCountry = null;
+
 
     private RecyclerView recyclerView;
     private GlobePostsAdapter mAdapter;
@@ -85,6 +104,8 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
 
     private FirebaseFunctions mFunctions;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+
+    private JsonPlaceholderApi jsonPlaceholderApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,11 +141,10 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onClick(View v) {
 
+                textView4.setText(" ");
                 if(mapCircle != null){
                     mapCircle.remove();
                 }
-
-                textView4.setText(mapObj.getCameraPosition().toString());
 
                 VisibleRegion visibleRegion = mapObj.getProjection().getVisibleRegion();
 
@@ -153,48 +173,69 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                 );
 
                 double radiusInMeters = Math.sqrt(Math.pow(distanceWidth[0], 2) + Math.pow(distanceHeight[0], 2)) / 2;
+                radiusInKm = radiusInMeters / 1000;
                 mapCircle = mapObj.addCircle(new CircleOptions()
                         //.center(new LatLng(latitude, longitude))
                         .center(mapObj.getCameraPosition().target)
                         .radius(radiusInMeters/2)
                         .strokeColor(0xFF303F9F)
                         .fillColor(Color.argb(70, 61, 81,181)));
-                textView5.setText(Double.toString(radiusInMeters/2));
+                textView5.append("KMs: " + Double.toString(radiusInKm/2));
 
-                String text = "mariusTest";
-                Map<String, Object> data = new HashMap<>();
-                data.put("text", "Hi Firebase!");
+                Double cameraTempLat = mapObj.getCameraPosition().target.latitude;
+                Double cameraTempLng = mapObj.getCameraPosition().target.longitude;
 
-                addNumbers(3,5)
-                        .addOnCompleteListener(new OnCompleteListener<Integer>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Integer> task) {
-                                if (!task.isSuccessful()) {
-                                    Exception e = task.getException();
-                                    if (e instanceof FirebaseFunctionsException) {
-                                        FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                if(!cameraLongitude.equals(cameraTempLng) || !cameraLatitude.equals(cameraTempLat)) {
+                    cameraLatitude = mapObj.getCameraPosition().target.latitude;
+                    cameraLongitude = mapObj.getCameraPosition().target.longitude;
 
-                                        // Function error code, will be INTERNAL if the failure
-                                        // was not handled properly in the function call.
-                                        FirebaseFunctionsException.Code code = ffe.getCode();
+                    posts.clear();
+                    mAdapter.notifyDataSetChanged();
 
-                                        // Arbitrary error details passed back from the function,
-                                        // usually a Map<String, Object>.
-                                        Object details = ffe.getDetails();
-                                    }
+                    getFirstPosts();
+                    coordinatesChanged = true;
 
-                                    // [START_EXCLUDE]
-                                    Log.d("SOME", "addNumbers:onFailure", e);
-                                    return;
-                                    // [END_EXCLUDE]
-                                }
+//                    textView4.setText(mapObj.getCameraPosition().toString());
+                } else {
+                    coordinatesChanged = false;
+                    // getMorePosts
+                }
 
-                                // [START_EXCLUDE]
-                                Integer result = task.getResult();
-                                Log.d("SOME2",String.valueOf(result));
-                                // [END_EXCLUDE]
-                            }
-                        });
+
+//                String text = "mariusTest";
+//                Map<String, Object> data = new HashMap<>();
+//                data.put("text", "Hi Firebase!");
+//
+//                addNumbers(3,5)
+//                        .addOnCompleteListener(new OnCompleteListener<Integer>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Integer> task) {
+//                                if (!task.isSuccessful()) {
+//                                    Exception e = task.getException();
+//                                    if (e instanceof FirebaseFunctionsException) {
+//                                        FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+//
+//                                        // Function error code, will be INTERNAL if the failure
+//                                        // was not handled properly in the function call.
+//                                        FirebaseFunctionsException.Code code = ffe.getCode();
+//
+//                                        // Arbitrary error details passed back from the function,
+//                                        // usually a Map<String, Object>.
+//                                        Object details = ffe.getDetails();
+//                                    }
+//
+//                                    // [START_EXCLUDE]
+//                                    Log.d("SOME", "addNumbers:onFailure", e);
+//                                    return;
+//                                    // [END_EXCLUDE]
+//                                }
+//
+//                                // [START_EXCLUDE]
+//                                Integer result = task.getResult();
+//                                Log.d("SOME2",String.valueOf(result));
+//                                // [END_EXCLUDE]
+//                            }
+//                        });
 
 //                FirebaseFunctions.getInstance()
 //                        .getHttpsCallable("helloWorld")
@@ -214,40 +255,197 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
             }
         });
 
-        populatePostsMockData_1();
+//        populatePostsMockData_1();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                Toast.makeText(getApplication(), "Outside IF", Toast.LENGTH_SHORT).show();
-                Log.d("postsIds.size(): ", postsIds.size()+" ");
-                Log.d("currentPost", " "+currentPost);
                 if (dx > 0 && currentPost < 3) {
-//                    Toast.makeText(getApplication(), "Inside IF 1", Toast.LENGTH_SHORT).show();
                     visibleItemCount = mLayoutManager.getChildCount();
                     totalItemCount = mLayoutManager.getItemCount();
                     pastVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
                     if (!isLoading) {
-//                        Toast.makeText(getApplication(), "Inside IF 2", Toast.LENGTH_SHORT).show();
                         if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
-//                            Toast.makeText(getApplication(), "Inside IF 3", Toast.LENGTH_SHORT).show();
 //
 //                            nrPostsDownloaded = 0;
 //                            if(currentPost < postsIds.size()) {
-                                Toast.makeText(getApplication(), "Inside IF 4", Toast.LENGTH_SHORT).show();
 
                                 isLoading = true;
                                 populatePostsMockData_1();
 
-//                                Toast.makeText(getApplication(), "Loaded some posts", Toast.LENGTH_SHORT).show();
 //                            }else{
-//                                Toast.makeText(getApplication(), "Inside ELSE", Toast.LENGTH_SHORT).show();
 ////                                Toast.makeText(getApplication(), "Displayed all posts", Toast.LENGTH_SHORT).show();
 //                            }
                         }
                     }
                 }
+            }
+        });
 
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("https://jsonplaceholder.typicode.com/")
+                .baseUrl("https://us-central1-msapath-c1831.cloudfunctions.net/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        jsonPlaceholderApi = retrofit.create(JsonPlaceholderApi.class);
+    }
+
+    private void getCountryFromGeo() {
+        final List<Address> addresses = new ArrayList<>();
+
+        try {
+            fetchedCountry = true;
+            Geocoder geo = new Geocoder(this.getApplicationContext(), Locale.getDefault());
+            addresses.addAll(geo.getFromLocation(cameraLatitude, cameraLongitude, 1));
+
+            if (addresses.isEmpty()) {
+                textView4.append("Please pick a continent or a country\n");
+                fetchedCountry = true;
+            } else {
+                if (addresses.size() > 0) {
+                    fetchedCountry = false;
+                    foundCountry = addresses.get(0).getCountryName();
+                    textView4.append("Normal: " + addresses.get(0).getCountryName());
+                }
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(this, "No Location Name Found", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void getFirstPosts() {
+
+        getCountryFromGeo();
+        if (fetchedCountry) {
+            return;
+        }
+
+//        if(fetchedCountry) {
+//            Toast.makeText(this, "Before handler", Toast.LENGTH_LONG).show();
+//
+//            Handler handler = new Handler();
+//            Runnable r = new Runnable() {
+//                public void run() {
+//                    Toast.makeText(getApplicationContext(), "Inside run" + addresses.size(), Toast.LENGTH_LONG).show();
+//
+//                    if (addresses.size() > 0) {
+//                        Toast.makeText(getApplicationContext(), "Inside IF", Toast.LENGTH_LONG).show();
+//                        textView4.append("Handler: " + addresses.get(0).getCountryName());
+//                        fetchedCountry = false;
+//                    }
+//                }
+//            };
+//            handler.postDelayed(r, 10000);
+//            x.append(" are mere");
+//            Toast.makeText(this, "Outside handler", Toast.LENGTH_LONG).show();
+//        }
+
+        Call<GlobePosts> call = jsonPlaceholderApi.getFirstPosts(
+                foundCountry,
+                radiusInKm/2,
+                cameraLatitude,
+                cameraLongitude
+        );
+
+        call.enqueue(new Callback<GlobePosts>() {
+            @Override
+            public void onResponse(Call<GlobePosts> call, Response<GlobePosts> response) {
+                if(!response.isSuccessful()) {
+                    textView4.setText("Code: " + response.code());
+                    return;
+                }
+
+                if(response.code() == 204) {
+                    textView4.setText("No posts from this region!");
+                    return;
+                }
+
+                GlobePosts postsData = response.body();
+
+                posts.addAll(postsData.getPosts());
+                mAdapter.notifyDataSetChanged();
+                isLoading = false;
+                currentPost += 1;
+
+                textView4.append("\nLoaded posts: " +posts.size()+"\n");
+            }
+
+            @Override
+            public void onFailure(Call<GlobePosts> call, Throwable t) {
+                textView4.setText("Failure: " + t.getMessage());
+            }
+        });
+    }
+
+    private void getComments() {
+        Call<List<CommentC>> call = jsonPlaceholderApi.getComments("posts/3/comments");
+
+        call.enqueue(new Callback<List<CommentC>>() {
+            @Override
+            public void onResponse(Call<List<CommentC>> call, Response<List<CommentC>> response) {
+                if(!response.isSuccessful()) {
+                    textView4.setText("Code: " + response.code());
+                    return;
+                }
+
+                List<CommentC> comments = response.body();
+                textView4.append("getComments()\n\n");
+                for(CommentC comment: comments) {
+                    String content = "";
+                    content += "ID: " + comment.getId() + "\n";
+                    content += "Post ID: " + comment.getPostId() + "\n";
+                    content += "Text: " + comment.getText() + "\n\n";
+
+                    textView4.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CommentC>> call, Throwable t) {
+                textView4.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void getPosts() {
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", "2");
+        params.put("_sort", "id");
+        params.put("_order", "asc");
+
+        Call<List<Post>> call = jsonPlaceholderApi.getPosts(params);
+//        Call<List<Post>> call = jsonPlaceholderApi.getPosts(new Integer[]{4,6}, null, null);
+
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (!response.isSuccessful()) {
+                    textView4.setText("Code: " + response.code());
+                    return;
+                }
+
+                List<Post> posts = response.body();
+
+                for(Post post: posts) {
+                    String content = "";
+                    content += "ID: " + post.getId() + "\n";
+                    content += "Title: " + post.getTitle() + "\n";
+                    content += "Text: " + post.getText() + "\n\n";
+
+                    textView4.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                textView4.setText(t.getMessage());
             }
         });
     }
