@@ -26,6 +26,16 @@ public interface JsonPlaceholderApi {
             @Query("longitude") Double longitude
     );
 
+    @GET("getMorePosts")
+    @Headers("Content-Type:application/json")
+    Call<GlobePosts>getMorePosts(
+            @Query("country") String country,
+            @Query("prevPostId") String prevPostId,
+            @Query("distance") Double distance,
+            @Query("latitude") Double latitude,
+            @Query("longitude") Double longitude
+    );
+
 //    @GET("posts")
 //    Call<List<Post>> getPosts(
 //            @Query("userId") Integer[] userId,

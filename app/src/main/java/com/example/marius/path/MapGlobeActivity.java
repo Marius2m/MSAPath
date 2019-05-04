@@ -90,7 +90,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
     boolean coordinatesChanged = false;
     boolean fetchedCountry = false;
     String foundCountry = null;
-
+    String prevPostId = null;
 
     private RecyclerView recyclerView;
     private GlobePostsAdapter mAdapter;
@@ -259,23 +259,15 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dx > 0 && currentPost < 3) {
+                if (dx > 0) {
                     visibleItemCount = mLayoutManager.getChildCount();
                     totalItemCount = mLayoutManager.getItemCount();
                     pastVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
-                    if (!isLoading) {
+                    if (!isLoading && coordinatesChanged) {
                         if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
-//
-//                            nrPostsDownloaded = 0;
-//                            if(currentPost < postsIds.size()) {
-
                                 isLoading = true;
-                                populatePostsMockData_1();
-
-//                            }else{
-////                                Toast.makeText(getApplication(), "Displayed all posts", Toast.LENGTH_SHORT).show();
-//                            }
+                                getMorePosts();
                         }
                     }
                 }
@@ -294,6 +286,70 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                 .build();
 
         jsonPlaceholderApi = retrofit.create(JsonPlaceholderApi.class);
+    }
+
+    private void getMorePosts() {
+
+//        if(fetchedCountry) {
+//            Toast.makeText(this, "Before handler", Toast.LENGTH_LONG).show();
+//
+//            Handler handler = new Handler();
+//            Runnable r = new Runnable() {
+//                public void run() {
+//                    Toast.makeText(getApplicationContext(), "Inside run" + addresses.size(), Toast.LENGTH_LONG).show();
+//
+//                    if (addresses.size() > 0) {
+//                        Toast.makeText(getApplicationContext(), "Inside IF", Toast.LENGTH_LONG).show();
+//                        textView4.append("Handler: " + addresses.get(0).getCountryName());
+//                        fetchedCountry = false;
+//                    }
+//                }
+//            };
+//            handler.postDelayed(r, 10000);
+//            x.append(" are mere");
+//            Toast.makeText(this, "Outside handler", Toast.LENGTH_LONG).show();
+//        }
+
+        Call<GlobePosts> call = jsonPlaceholderApi.getMorePosts(
+                foundCountry,
+                prevPostId,
+                radiusInKm/2,
+                cameraLatitude,
+                cameraLongitude
+        );
+
+        call.enqueue(new Callback<GlobePosts>() {
+            @Override
+            public void onResponse(Call<GlobePosts> call, Response<GlobePosts> response) {
+                if(!response.isSuccessful()) {
+                    textView4.setText("@ Code: " + response.code());
+                    return;
+                }
+
+                if(response.code() == 204) {
+                    textView4.setText("@ No posts from this region!");
+                    return;
+                }
+
+                textView4.setText("@ RESP CODE: " + response.code());
+                GlobePosts postsData = response.body();
+
+                posts.addAll(postsData.getPosts());
+                prevPostId = postsData.getPrevPostId();
+                textView4.append("PREV POSTID: " + prevPostId);
+
+                mAdapter.notifyDataSetChanged();
+                currentPost += 1;
+                isLoading = false;
+
+                textView4.append("\n@ Loaded posts: " +posts.size()+"\n");
+            }
+
+            @Override
+            public void onFailure(Call<GlobePosts> call, Throwable t) {
+                textView4.setText("@ Failure: " + t.getMessage());
+            }
+        });
     }
 
     private void getCountryFromGeo() {
@@ -363,7 +419,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                 }
 
                 if(response.code() == 204) {
-                    textView4.setText("No posts from this region!");
+                    textView4.setText("No more posts from this region!");
                     return;
                 }
 
@@ -371,6 +427,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
 
                 posts.addAll(postsData.getPosts());
                 mAdapter.notifyDataSetChanged();
+                prevPostId = postsData.getPrevPostId();
                 isLoading = false;
                 currentPost += 1;
 
