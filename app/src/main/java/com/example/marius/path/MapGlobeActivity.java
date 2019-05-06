@@ -180,7 +180,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                         .radius(radiusInMeters/2)
                         .strokeColor(0xFF303F9F)
                         .fillColor(Color.argb(70, 61, 81,181)));
-                textView5.append("KMs: " + Double.toString(radiusInKm/2));
+                textView5.setText("KMs: " + Double.toString(radiusInKm/2));
 
                 Double cameraTempLat = mapObj.getCameraPosition().target.latitude;
                 Double cameraTempLng = mapObj.getCameraPosition().target.longitude;
@@ -198,7 +198,6 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
 //                    textView4.setText(mapObj.getCameraPosition().toString());
                 } else {
                     coordinatesChanged = false;
-                    // getMorePosts
                 }
 
 
@@ -579,6 +578,15 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
 //            return;
 //        }
 //        map.setMyLocationEnabled(true);
+
+        mapObj.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                //Called when camera movement has ended, there are no pending animations and the user has stopped interacting with the map.
+                Toast.makeText(getApplicationContext(), mapObj.getCameraPosition().toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
         LatLng sydney = new LatLng(-34, 151);
         map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 
