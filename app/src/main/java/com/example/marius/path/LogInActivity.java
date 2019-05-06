@@ -1,24 +1,31 @@
 package com.example.marius.path;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.marius.path.user_data.UserAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseAuth auth;
@@ -27,6 +34,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
     Button login_btn;
     EditText userEmail, userPassword;
+    TextView register_txt;
     ProgressBar progressBar;
 //    private String userId;
 
@@ -41,10 +49,41 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
 
         findViewById(R.id.login_btn).setOnClickListener(this);
+        register_txt = findViewById(R.id.register_txt);
+
+        styleRegisterTxtView();
 
         userEmail = (EditText) findViewById(R.id.regMail);
         userPassword = (EditText) findViewById(R.id.regPassword);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
+    private void styleRegisterTxtView() {
+        String registerText = "Don't have an account?  Register now";
+        SpannableString ss = new SpannableString(registerText);
+        ForegroundColorSpan fcsPrimaryClr = new ForegroundColorSpan(Color.parseColor("#FF3F51B5"));
+        ClickableSpan registerClick = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View widget) {
+                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        ss.setSpan(fcsPrimaryClr,24, registerText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new StyleSpan(Typeface.BOLD), 24, registerText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(registerClick, 24, registerText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        register_txt.setText(ss);
+        register_txt.setHighlightColor(Color.TRANSPARENT);
+        register_txt.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void userLogIn(){

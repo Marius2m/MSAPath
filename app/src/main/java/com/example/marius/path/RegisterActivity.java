@@ -2,11 +2,20 @@ package com.example.marius.path;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.media.Image;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -15,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marius.path.PicassoTransformations.CircleTransform;
@@ -31,7 +41,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -39,12 +48,10 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText regName, regMail, regPassword, regPassword2;
+    private TextView login_txt;
     private ImageView selectAvatarPicture, avatarPicture;
     private Button regBtn;
     private ProgressBar progressBar;
@@ -77,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
         regMail = (EditText) findViewById(R.id.regMail);
         regPassword = (EditText) findViewById(R.id.regPassword);
         regPassword2 = (EditText) findViewById(R.id.regPassword2);
+        login_txt = findViewById(R.id.login_txt);
 
         regBtn = (Button) findViewById(R.id.login_btn);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -94,12 +102,42 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        styleLoginTxtView();
+
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 registerUser();
             }
         });
+    }
+
+    private void styleLoginTxtView() {
+        String loginText = "Already have an account?  Log In";
+        SpannableString ss = new SpannableString(loginText);
+        ForegroundColorSpan fcsPrimaryClr = new ForegroundColorSpan(Color.parseColor("#FF3F51B5"));
+        ClickableSpan loginClick = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View widget) {
+                Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        ss.setSpan(fcsPrimaryClr,26,loginText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new StyleSpan(Typeface.BOLD), 26, loginText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(loginClick, 26, loginText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        login_txt.setText(ss);
+        login_txt.setHighlightColor(Color.TRANSPARENT);
+        login_txt.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void registerUser(){
