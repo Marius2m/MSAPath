@@ -80,17 +80,17 @@ public class RegisterActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
 
-        regName = (EditText) findViewById(R.id.regName);
-        regMail = (EditText) findViewById(R.id.regMail);
-        regPassword = (EditText) findViewById(R.id.regPassword);
-        regPassword2 = (EditText) findViewById(R.id.regPassword2);
+        regName = findViewById(R.id.regName);
+        regMail = findViewById(R.id.regMail);
+        regPassword = findViewById(R.id.regPassword);
+        regPassword2 = findViewById(R.id.regPassword2);
         login_txt = findViewById(R.id.login_txt);
 
-        regBtn = (Button) findViewById(R.id.login_btn);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        regBtn = findViewById(R.id.login_btn);
+        progressBar = findViewById(R.id.progressBar);
 
         avatarPicture = findViewById(R.id.avatarPicture);
-        selectAvatarPicture = (ImageView) findViewById(R.id.selectAvatarPicture);
+        selectAvatarPicture = findViewById(R.id.selectAvatarPicture);
         selectAvatarPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,6 +192,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     FirebaseUser user = auth.getCurrentUser();
                     userId = user.getUid();
+//                    auth.getInstance().signOut();
 
                     DateFormat dateF = new SimpleDateFormat("d MMM yyyy");
                     String date = dateF.format(Calendar.getInstance().getTime());
@@ -204,12 +205,12 @@ public class RegisterActivity extends AppCompatActivity {
                         databaseReference.child("users").child(userId).setValue(userAcc);
                         Log.d("failTag", "fail" + userAcc.toString());
 
-                        Intent intent = new Intent(RegisterActivity.this, ProfileActivity.class);
-                        startActivity(intent);
+                        Intent intent = getIntent();
+                        intent.putExtra("email", email);
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
 
-
-                    //Toast.makeText(getApplicationContext(), "Registration successfull", Toast.LENGTH_SHORT).show();
                 }else {
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                         Toast.makeText(getApplicationContext(), "A user with this email has already registered.", Toast.LENGTH_SHORT).show();
@@ -258,10 +259,10 @@ public class RegisterActivity extends AppCompatActivity {
                         userAcc.setProfilePictureUrl(uri.toString());
                         databaseReference.child("users").child(userId).setValue(userAcc);
 
-                        Log.d("failTag", "fail" + userAcc.toString());
-
-                        Intent intent = new Intent(RegisterActivity.this, ProfileActivity.class);
-                        startActivity(intent);
+                        Intent intent = getIntent();
+                        intent.putExtra("email", regMail.getText().toString().trim());
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
                 });
             }

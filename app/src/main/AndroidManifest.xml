@@ -45,7 +45,7 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
-        <activity android:name=".Main2Activity">
+        <activity android:name=".ProfileActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,7 +54,6 @@
         </activity>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LogInActivity" />
-        <activity android:name=".ProfileActivity" />
         <activity android:name=".SinglePostActivity" />
         <activity android:name=".MapGlobeActivity"/>
         <activity

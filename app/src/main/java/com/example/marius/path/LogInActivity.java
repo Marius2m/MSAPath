@@ -28,6 +28,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final int REQUEST_CODE_REGISTER_ACTIVITY = 101;
     FirebaseAuth auth;
 //    private FirebaseDatabase database;
 //    private DatabaseReference databaseReference;
@@ -53,9 +54,9 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
         styleRegisterTxtView();
 
-        userEmail = (EditText) findViewById(R.id.regMail);
-        userPassword = (EditText) findViewById(R.id.regPassword);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        userEmail = findViewById(R.id.regMail);
+        userPassword = findViewById(R.id.regPassword);
+        progressBar = findViewById(R.id.progressBar);
     }
 
     private void styleRegisterTxtView() {
@@ -66,9 +67,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(@NonNull View widget) {
                 Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                finish();
+                startActivityForResult(intent, REQUEST_CODE_REGISTER_ACTIVITY);
             }
 
             @Override
@@ -84,6 +83,21 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
         register_txt.setText(ss);
         register_txt.setHighlightColor(Color.TRANSPARENT);
         register_txt.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_REGISTER_ACTIVITY) {
+            if(resultCode == RESULT_OK) {
+//                String email = data.getStringExtra("email");
+//                userEmail.setText(email);
+                Intent intent = getIntent();
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
     }
 
     private void userLogIn(){
@@ -114,18 +128,15 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
         progressBar.setVisibility(View.VISIBLE);
 
-        final String allData = email + password;
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 progressBar.setVisibility(View.GONE);
 
                 if(task.isSuccessful()){
-                    //Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(LogInActivity.this, ProfileActivity.class);
-                    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //clears the activity stack
-                    startActivity(intent);
+                    Intent intent = getIntent();
+                    setResult(RESULT_OK, intent);
+                    finish();
                 }else{
                     Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
