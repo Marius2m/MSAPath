@@ -1,15 +1,18 @@
 package com.example.marius.path.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,14 +36,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
         public TextView location, author, postThumbnailTitle;
         public CardView cardView;
         public ImageView coverImg;
+        public ImageButton deleteBtn;
 
         public CustomViewHolder(View view){
             super(view);
-            location = (TextView) view.findViewById(R.id.postLocationDays);
-            author = (TextView) view.findViewById(R.id.authorPost);
-            postThumbnailTitle = (TextView) view.findViewById(R.id.postThumbnailTitle);
-            cardView = (CardView) view.findViewById(R.id.cardPostView);
+            location = view.findViewById(R.id.postLocationDays);
+            author = view.findViewById(R.id.authorPost);
+            postThumbnailTitle = view.findViewById(R.id.postThumbnailTitle);
+            cardView = view.findViewById(R.id.cardPostView);
             coverImg = view.findViewById(R.id.coverImg);
+            deleteBtn = view.findViewById(R.id.deleteBtn);
         }
     }
 
@@ -73,6 +78,28 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
                 .centerCrop()
                 .fit()
                 .into(holder.coverImg);
+
+        holder.deleteBtn.setOnClickListener(v -> {
+//                DialogFragment dialog = new DeletePostDialog();
+//                dialog.setTargetFragment(this, );
+//                dialog.show(etFragmentManager(), "tag");
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Delete Path")
+                    .setMessage("Are you sure you want to delete this path? Action cannot be undone.")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes",
+                            (dialog, id) -> {
+                                System.out.println("position to be deleted" + position);
+
+                                Intent intent = new Intent("nr-paths-changed");
+                                intent.putExtra("position", position);
+                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                            })
+                    .setNegativeButton("No",
+                            (dialog, id) -> dialog.cancel());
+            final AlertDialog alert = builder.create();
+            alert.show();
+        });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

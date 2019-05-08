@@ -1,9 +1,14 @@
 package com.example.marius.path;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,6 +60,12 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         v = inflater.inflate(R.layout.fragment_home, container, false);
 
+        // Register to receive messages.
+        // We are registering an observer (mMessageReceiver) to receive Intents
+        // with actions named "custom-message".
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMessageReceiver,
+                new IntentFilter("nr-paths-changed"));
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         recyclerView = (RecyclerView) v.findViewById(R.id.home_recyclerView2);
@@ -103,6 +114,21 @@ public class HomeFragment extends Fragment {
 
         return v;
     }
+
+    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            int index = intent.getIntExtra("position", -1);
+            if (index >= 0) {
+                System.out.println("Position is: " + index);
+                posts.remove(index);
+                mAdapter.notifyItemRemoved(index);
+                mAdapter.notifyItemRangeChanged(index, mAdapter.getItemCount());
+                nr_of_paths.setText(String.valueOf(posts.size()));
+            }
+        }
+    };
 
     public void getUserData(){
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
