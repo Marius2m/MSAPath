@@ -89,10 +89,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
                     .setCancelable(false)
                     .setPositiveButton("Yes",
                             (dialog, id) -> {
-                                System.out.println("position to be deleted" + position);
+                                String postId = post.getPostId();
+                                posts.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeRemoved(position, 1);
 
                                 Intent intent = new Intent("nr-paths-changed");
                                 intent.putExtra("position", position);
+                                intent.putExtra("postId", postId);
                                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                             })
                     .setNegativeButton("No",

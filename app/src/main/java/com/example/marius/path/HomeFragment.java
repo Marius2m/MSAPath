@@ -32,7 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
     private View v;
@@ -50,6 +52,8 @@ public class HomeFragment extends Fragment {
 
     private List<IndividualPost> posts = new ArrayList<>();
     private List<String> postsIds = new ArrayList<>();
+    private Map<String, String> postKeys = new HashMap<>();
+//    private List<String> postsKeys = new ArrayList<>();
     private static final int NR_POSTS_TO_DOWNLOAD = 3;
     private String userId;
     private int currentPost = 0;
@@ -68,12 +72,12 @@ public class HomeFragment extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.home_recyclerView2);
+        recyclerView = v.findViewById(R.id.home_recyclerView2);
         mAdapter = new PostsAdapter(posts);
 
-        nr_of_paths = (TextView) v.findViewById(R.id.nr_of_paths);
-        nr_hearts = (TextView) v.findViewById(R.id.nr_hearts);
-        home_headerTitle = (TextView) v.findViewById(R.id.home_headerTitle);
+        nr_of_paths = v.findViewById(R.id.nr_of_paths);
+        nr_hearts = v.findViewById(R.id.nr_hearts);
+        home_headerTitle = v.findViewById(R.id.home_headerTitle);
         home_avatar = v.findViewById(R.id.home_avatar);
 
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -81,8 +85,6 @@ public class HomeFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
-//        populatePosts();
-//        mAdapter.notifyDataSetChanged();
         getUserData();
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -108,7 +110,6 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 }
-
             }
         });
 
@@ -118,13 +119,17 @@ public class HomeFragment extends Fragment {
     public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             int index = intent.getIntExtra("position", -1);
+            String postId = intent.getStringExtra("postId");
             if (index >= 0) {
-                System.out.println("Position is: " + index);
-                posts.remove(index);
-                mAdapter.notifyItemRemoved(index);
-                mAdapter.notifyItemRangeChanged(index, mAdapter.getItemCount());
+
+                StringBuilder postKey = new StringBuilder(postKeys.get(postId));
+                System.out.println(postKey.hashCode());
+                System.out.println(postKeys.get(postId).hashCode());
+                //                        postKeys.remove(postId);
+                mDatabase.child("users").child(userId).child("posts").child(postKey.toString()).removeValue();
+                System.out.println("postId is:" + postKeys.get(postId));
+
                 nr_of_paths.setText(String.valueOf(posts.size()));
             }
         }
@@ -150,12 +155,16 @@ public class HomeFragment extends Fragment {
                             .into(home_avatar);
                 }
                 if(dataSnapshot.child("posts").getValue() != null) {
+
                     Iterable<DataSnapshot> it = dataSnapshot.child("posts").getChildren();
                     for (DataSnapshot post : it) {
                         postsIds.add(post.getValue().toString());
+                        postKeys.put(post.getValue().toString(), post.getKey());
+                        System.out.println("posts.getValue()" + post.getKey());
                     }
 
                     nr_of_paths.setText(String.valueOf(postsIds.size()));
+                    System.out.println("Inside SizeKeys: " + postKeys.size());
 
                     initialPopulation();
                 }
@@ -183,12 +192,10 @@ public class HomeFragment extends Fragment {
                     }else{
                         isLoading = false;
                         mAdapter.notifyDataSetChanged();
-                        System.out.println("isLoading inside" + isLoading);
                     }
                 }else{
                     isLoading = false;
                     mAdapter.notifyDataSetChanged();
-                    System.out.println("isLoading inside" + isLoading);
                 }
             }
 
@@ -198,37 +205,6 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
-//    public void populateRecyclerView(){
-//        System.out.println("ENTERED populateRecyclerView: " + currentPost + "========");
-//        mDatabase.child("posts").child(postsIds.get(currentPost++)).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                final IndividualPost indivPost = dataSnapshot.getValue(IndividualPost.class);
-//                posts.add(indivPost);
-//                ++nrPostsDownloaded;
-//
-//                if(nrPostsDownloaded < NR_POSTS_TO_DOWNLOAD){
-//                    if(currentPost < postsIds.size()) {
-//                        populateRecyclerView();
-//                    }else{
-//                        isLoading = false;
-//                        mAdapter.notifyDataSetChanged();
-//                        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4 COVERAGE 1");
-//                    }
-//                }else{
-//                    isLoading = false;
-//                    mAdapter.notifyDataSetChanged();
-//                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4 COVERAGE 2");
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
 
     private void populatePostsMockData_1(){
 //        posts.add(new IndividualPost(new String(1547220397), "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "xD"));
@@ -241,7 +217,6 @@ public class HomeFragment extends Fragment {
 //        posts.add(new IndividualPost(new Long(1547220397), "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor", "XXD"));
 //        posts.add(new IndividualPost(new Long(1547220397), "09 APR 2018", "JERULASEM", "5", "BeautifulMan", "11414fff", "xD"));
 //        posts.add(new IndividualPost(new Long(1547220397), "13 FEB 2019", "10 10 10 10", "5","Venice", "Marius Mircea", "ASDADSA"));
-
     }
     private void populatePostsMockData_2(){
 //        posts.add(new IndividualPost(new Long(1547220397), "09 APR 2018", "FAKEEEEEEEE", "5", "BeautifulMan", "11414fff", "xD"));
