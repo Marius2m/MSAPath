@@ -91,15 +91,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         avatarPicture = findViewById(R.id.avatarPicture);
         selectAvatarPicture = findViewById(R.id.selectAvatarPicture);
-        selectAvatarPicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CropImage.activity()
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .start(RegisterActivity.this);
-                Log.v("TAGG", " click");
+        selectAvatarPicture.setOnClickListener(v -> {
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(RegisterActivity.this);
+            Log.v("TAGG", " click");
 
-            }
         });
 
         styleLoginTxtView();

@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
     private View v;
     private TextView nr_of_paths, nr_hearts, home_headerTitle;
     private RecyclerView recyclerView;
@@ -58,6 +59,9 @@ public class HomeFragment extends Fragment {
     private String userId;
     private int currentPost = 0;
     private int nrPostsDownloaded = 0;
+    private String userName;
+    private String email;
+    private String profilePictureUrl;
 
     @Nullable
     @Override
@@ -79,6 +83,7 @@ public class HomeFragment extends Fragment {
         nr_hearts = v.findViewById(R.id.nr_hearts);
         home_headerTitle = v.findViewById(R.id.home_headerTitle);
         home_avatar = v.findViewById(R.id.home_avatar);
+        home_avatar.setOnClickListener(this);
 
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -142,10 +147,13 @@ public class HomeFragment extends Fragment {
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String userName = dataSnapshot.child("name").getValue(String.class);
+                userName = dataSnapshot.child("name").getValue(String.class);
+                email = dataSnapshot.child("email").getValue(String.class);
                 home_headerTitle.setText(userName);
 
                 if(dataSnapshot.child("profilePictureUrl").getValue(String.class) != null) {
+                    profilePictureUrl = dataSnapshot.child("profilePictureUrl").getValue(String.class);
+                    Log.d("picasso", profilePictureUrl);
                     Picasso.get()
                             .load(dataSnapshot.child("profilePictureUrl").getValue(String.class))
                             .placeholder(home_avatar.getDrawable())
@@ -223,4 +231,19 @@ public class HomeFragment extends Fragment {
 //        isLoading = false;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.home_avatar:
+                Toast.makeText(this.getContext(), "Worked", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getContext(), Settings.class);
+                intent.putExtra("name", userName);
+                intent.putExtra("email", email);
+                intent.putExtra("avatar", profilePictureUrl);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+    }
 }
