@@ -2,9 +2,20 @@ package com.example.marius.path;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -76,6 +87,7 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         change_password_btn.setOnClickListener(this);
         reset_password = findViewById(R.id.reset_password);
         reset_password.setOnClickListener(this);
+        styleResetPassword();
 
         if (activityType.equals("Name")) {
             current_name.setText(getIntent().getStringExtra("name"));
@@ -88,6 +100,53 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         }
         change_profile_ll.setVisibility(View.VISIBLE);
     }
+
+    private void styleResetPassword() {
+        String loginText = "Forgot password?  Reset via e-mail";
+        SpannableString ss = new SpannableString(loginText);
+        ForegroundColorSpan fcsPrimaryClr = new ForegroundColorSpan(Color.parseColor("#FF3F51B5"));
+        ClickableSpan resetPasswordClick = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View widget) {
+                try {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                } catch (Exception e) {
+                    Log.d("keyboard", "Failed to close keyboard");
+                }
+
+               FirebaseAuth.getInstance().sendPasswordResetEmail(firebaseUser.getEmail())
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Reset link has been sent to your e-mail!", Toast.LENGTH_SHORT).show();
+                                Handler handler = new Handler();
+                                Runnable r = () -> {
+                                    Intent intent = new Intent();
+                                    setResult(Activity.RESULT_OK, intent);
+                                    finish();
+                                };
+                                handler.postDelayed(r, 1500);
+                            } else {
+                                Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        ss.setSpan(fcsPrimaryClr,18,loginText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new StyleSpan(Typeface.BOLD), 18, loginText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(resetPasswordClick, 18, loginText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        reset_password.setText(ss);
+        reset_password.setHighlightColor(Color.TRANSPARENT);
+        reset_password.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -119,18 +178,68 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 } catch (Exception e) {
                     Log.d("keyboard", "Failed to close keyboard");
                 }
-                Toast.makeText(this, "change_password_btn", Toast.LENGTH_LONG).show();
-                finish();
+                changePassword();
                 break;
 
-            case R.id.reset_password:
-                Toast.makeText(this, "reset_password", Toast.LENGTH_LONG).show();
-                finish();
-                break;
+//            case R.id.reset_password:
+////                Toast.makeText(this, "reset_password", Toast.LENGTH_LONG).show();
+////                finish();
+////                break;
 
             default:
                 break;
         }
+    }
+
+    private void changePassword() {
+        final String currentPassword = current_password.getText().toString();
+        final String newPassword = new_password.getText().toString();
+        final String confirmPassword = confirm_password.getText().toString();
+
+        if (newPassword.length() < 6) {
+            new_password.setError("A password is of at least 6 characters is required.");
+            new_password.requestFocus();
+            return;
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            new_password.setError("The two passwords must match.");
+            new_password.requestFocus();
+            return;
+        }
+        if (currentPassword.equals(newPassword)) {
+            current_password.setError("New password cannot be current password.");
+            current_password.requestFocus();
+            return;
+        }
+
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(firebaseUser.getEmail(), currentPassword);
+
+        firebaseUser.reauthenticate(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("userReAuth", "User re-authenticated.");
+
+                        firebaseUser.updatePassword(newPassword).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Password has been successfully changed!", Toast.LENGTH_SHORT).show();
+                                Handler handler = new Handler();
+                                Runnable r = () -> {
+                                    Intent intent = new Intent();
+                                    setResult(Activity.RESULT_OK, intent);
+                                    finish();
+                                };
+                                handler.postDelayed(r, 1500);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Failed to change password.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Your current password is wrong.", Toast.LENGTH_SHORT).show();
+                        Log.d("userReAuth", "Failed to re-authenticate.");
+                    }
+                });
+
     }
 
     private void changeEmail() {
