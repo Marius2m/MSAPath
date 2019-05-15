@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class SinglePostActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageButton back_button, heart_button;
+    private ImageButton back_button, heart_button, share_toolbar_btn;
     private boolean isRedHeart = false;
     private TextView postThumbnailTitle, destination_text, date_text, days_text;
     private RelativeLayout parentRLayout;
@@ -80,6 +80,8 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         back_button.setOnClickListener(this);
         heart_button = (ImageButton) findViewById(R.id.heart_toolbar_btn);
         heart_button.setOnClickListener(this);
+        share_toolbar_btn = findViewById(R.id.share_toolbar_btn);
+        share_toolbar_btn.setOnClickListener(this);
 
         Intent intent = getIntent();
         postData = (IndividualPost)intent.getSerializableExtra("postObject");
@@ -266,9 +268,12 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
 
-//            case R.id.threeButton:
-//                // do your code
-//                break;
+            case R.id.share_toolbar_btn:
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, postThumbnailTitle.getText() + ": \n" + "https://path.com/path=" + postData.getPostId());
+                startActivity(Intent.createChooser(shareIntent, "Share path"));
+                break;
 
             default:
                 break;
