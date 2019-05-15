@@ -31,6 +31,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
     private static final int REQUEST_CODE_NAME_OK = 105;
     private static final int REQUEST_CODE_EMAIL_OK = 106;
+    private static final int REQUEST_CODE_DELETE_PROFILE_OK = 107;
     private String name;
     private String email;
     private String avatar;
@@ -151,6 +152,15 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 email = data.getExtras().getString("email");
                 System.out.println("Changed email is: " + email);
             }
+        } else if (requestCode == REQUEST_CODE_DELETE_PROFILE_OK){
+            if (resultCode == RESULT_OK){
+                System.out.println("Deleted profile successfully, now going to Log-in");
+                mAuth.signOut();
+                Intent intent = new Intent(this, ProfileActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
@@ -191,9 +201,14 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.delete_profile_btn:
+            case R.id.delete_profile_btn: {
+                Intent intent = new Intent(this, EditProfile.class);
+                intent.putExtra("title", "DeleteProfile");
+                intent.putExtra("view", R.id.change_name_ll);
+                startActivityForResult(intent, REQUEST_CODE_DELETE_PROFILE_OK);
                 Toast.makeText(this, "Delete Profile", Toast.LENGTH_LONG).show();
                 break;
+            }
 
             case R.id.sign_out_btn:
                 Toast.makeText(this, "Sign Out", Toast.LENGTH_LONG).show();

@@ -19,6 +19,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,11 +40,12 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     private DatabaseReference mDatabase;
     private FirebaseUser firebaseUser;
 
-    String userKey;
+    private String userKey;
+    private boolean isLoading = false;
 
     private TextView edit_profile_title, reset_password;
-    private EditText current_name, new_name, current_password, new_password, confirm_password, current_email, new_email, confirm_password_email;
-    private Button change_name_btn, change_password_btn, change_email_btn;
+    private EditText current_name, new_name, current_password, new_password, confirm_password, current_email, new_email, confirm_password_email, confirm_password_delete_profile;
+    private Button change_name_btn, change_password_btn, change_email_btn, delete_profile_btn;
     private LinearLayout change_profile_ll;
 
     @Override
@@ -89,6 +91,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
         reset_password.setOnClickListener(this);
         styleResetPassword();
 
+        // deleteProfile
+        confirm_password_delete_profile = findViewById(R.id.confirm_password_delete_profile);
+        delete_profile_btn = findViewById(R.id.delete_profile_btn);
+        delete_profile_btn.setOnClickListener(this);
+
         if (activityType.equals("Name")) {
             current_name.setText(getIntent().getStringExtra("name"));
             change_profile_ll = findViewById(R.id.change_name_ll);
@@ -97,6 +104,9 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
             change_profile_ll = findViewById(R.id.change_email_ll);
         } else if(activityType.equals("Password")) {
             change_profile_ll = findViewById(R.id.change_password_ll);
+        } else if (activityType.equals("DeleteProfile")) {
+            edit_profile_title.setText("Delete Profile");
+            change_profile_ll = findViewById(R.id.delete_profile_ll);
         }
         change_profile_ll.setVisibility(View.VISIBLE);
     }
@@ -181,6 +191,15 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 changePassword();
                 break;
 
+            case R.id.delete_profile_btn:
+                try {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                } catch (Exception e) {
+                    Log.d("keyboard", "Failed to close keyboard");
+                }
+                deleteProfile();
+                break;
 //            case R.id.reset_password:
 ////                Toast.makeText(this, "reset_password", Toast.LENGTH_LONG).show();
 ////                finish();
@@ -237,6 +256,61 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     } else {
                         Toast.makeText(getApplicationContext(), "Your current password is wrong.", Toast.LENGTH_SHORT).show();
                         Log.d("userReAuth", "Failed to re-authenticate.");
+                    }
+                });
+
+    }
+
+    private void deleteProfile() {
+
+        final String currentPassword = confirm_password_delete_profile.getText().toString();
+
+        if (currentPassword.length() < 6) {
+            confirm_password_delete_profile.setError("A password is of at least 6 characters is required.");
+            confirm_password_delete_profile.requestFocus();
+            return;
+        }
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(firebaseUser.getEmail(), currentPassword);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        isLoading = true;
+        firebaseUser.reauthenticate(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("userReAuthDelProfile", "User re-authenticated .");
+
+                        Toast.makeText(getApplicationContext(), "Profile has been deleted. You will now be logged out.", Toast.LENGTH_SHORT).show();
+                                Handler handler = new Handler();
+                                Runnable r = () -> {
+                                    Intent intent = new Intent();
+                                    setResult(Activity.RESULT_OK, intent);
+                                    finish();
+                                };
+                                handler.postDelayed(r, 1500);
+
+
+                        // call firebase HTTP delete function
+                        // -> onResponse log-out + deletestack
+//                        firebaseUser.updatePassword(newPassword).addOnCompleteListener(task1 -> {
+//                            if (task1.isSuccessful()) {
+//                                Toast.makeText(getApplicationContext(), "Password has been successfully changed!", Toast.LENGTH_SHORT).show();
+//                                Handler handler = new Handler();
+//                                Runnable r = () -> {
+//                                    Intent intent = new Intent();
+//                                    setResult(Activity.RESULT_OK, intent);
+//                                    finish();
+//                                };
+//                                handler.postDelayed(r, 1500);
+//                            } else {
+//                                Toast.makeText(getApplicationContext(), "Failed to change password.", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+                    } else {
+                        isLoading = false;
+                        Toast.makeText(getApplicationContext(), "Your current password is wrong.", Toast.LENGTH_SHORT).show();
+                        Log.d("userReAuthDelProfile", "Failed to re-authenticate.");
                     }
                 });
 
@@ -315,5 +389,11 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to change name", Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!isLoading)
+            super.onBackPressed();
     }
 }

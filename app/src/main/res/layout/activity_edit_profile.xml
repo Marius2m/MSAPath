@@ -191,4 +191,41 @@
             android:text="Change Email"
             android:textColor="#ffffff" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/delete_profile_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_profile_title">
+
+        <EditText
+            android:id="@+id/confirm_password_delete_profile"
+            android:layout_width="265dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/reg_edittext_style"
+            android:ems="10"
+            android:hint="Current Password"
+            android:inputType="textPassword"  />
+
+        <Button
+            android:id="@+id/delete_profile_btn"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:background="@drawable/reg_btn_style"
+            android:text="Delete profile"
+            android:textColor="#ffffff" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
