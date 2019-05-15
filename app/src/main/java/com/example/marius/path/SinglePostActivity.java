@@ -253,7 +253,7 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         switch (v.getId()) {
 
             case R.id.back_toolbar_btn:
-                Toast.makeText(v.getContext(), "lolk", Toast.LENGTH_SHORT).show();
+                finish();
                 break;
 
             case R.id.heart_toolbar_btn:
