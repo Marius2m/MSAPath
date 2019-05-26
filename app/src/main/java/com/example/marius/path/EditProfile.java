@@ -27,12 +27,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marius.path.services.JsonPlaceholderApi;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EditProfile extends AppCompatActivity implements View.OnClickListener {
 
@@ -47,6 +56,8 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     private EditText current_name, new_name, current_password, new_password, confirm_password, current_email, new_email, confirm_password_email, confirm_password_delete_profile;
     private Button change_name_btn, change_password_btn, change_email_btn, delete_profile_btn;
     private LinearLayout change_profile_ll;
+
+    private JsonPlaceholderApi jsonPlaceholderApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -262,6 +273,16 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
     }
 
     private void deleteProfile() {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://us-central1-msapath-c1831.cloudfunctions.net/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        jsonPlaceholderApi = retrofit.create(JsonPlaceholderApi.class);
 
         final String currentPassword = confirm_password_delete_profile.getText().toString();
 
@@ -281,7 +302,13 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                     if (task.isSuccessful()) {
                         Log.d("userReAuthDelProfile", "User re-authenticated .");
 
-                        Toast.makeText(getApplicationContext(), "Profile has been deleted. You will now be logged out.", Toast.LENGTH_SHORT).show();
+                        Call<Void> call = jsonPlaceholderApi.deleteProfile();
+
+                        call.enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                Log.d("userReAuthDelProfile", "Response code: " + response.code());
+                                Toast.makeText(getApplicationContext(), "Profile has been deleted. You will now be logged out.", Toast.LENGTH_SHORT).show();
                                 Handler handler = new Handler();
                                 Runnable r = () -> {
                                     Intent intent = new Intent();
@@ -289,9 +316,17 @@ public class EditProfile extends AppCompatActivity implements View.OnClickListen
                                     finish();
                                 };
                                 handler.postDelayed(r, 1500);
+                            }
 
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                isLoading = false;
+                                Toast.makeText(getApplicationContext(), "Failed to delete your profile.", Toast.LENGTH_SHORT).show();
+                                Log.d("userReAuthDelProfile", "Failed to delete profile.");
+                            }
+                        });
 
-                        // call firebase HTTP delete function
+                                                // call firebase HTTP delete function
                         // -> onResponse log-out + deletestack
 //                        firebaseUser.updatePassword(newPassword).addOnCompleteListener(task1 -> {
 //                            if (task1.isSuccessful()) {

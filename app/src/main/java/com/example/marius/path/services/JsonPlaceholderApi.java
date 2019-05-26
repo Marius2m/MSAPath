@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
@@ -35,6 +36,11 @@ public interface JsonPlaceholderApi {
             @Query("latitude") Double latitude,
             @Query("longitude") Double longitude
     );
+
+    @DELETE("fakeDelete")
+    @Headers("Content-Type:application/json")
+    Call<Void> deleteProfile();
+
 
 //    @GET("posts")
 //    Call<List<Post>> getPosts(
