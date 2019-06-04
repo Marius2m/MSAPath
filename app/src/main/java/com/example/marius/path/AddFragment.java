@@ -315,7 +315,7 @@ public class AddFragment extends Fragment {
     }
 
     private void setLocationField(String locationData) {
-        String regex = "address=([A-Za-z,\\u00BF-\\u1FFF\\u2C00-\\uD7FF\\w -]*)attributions[a-zA-Z =\\[\\],0-9-_]*lat/lng:\\W*([-0-9\\.]*),([-0-9\\.]*)";
+        String regex = "address=[0-9 ]*([A-Za-z,\\p{Alpha} /-]*)attributions[a-zA-Z =\\[\\],0-9-_]*lat/lng:\\W*([-0-9\\.]*),([-0-9\\.]*)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(locationData);
 
@@ -331,13 +331,13 @@ public class AddFragment extends Fragment {
         if (res.length >= 2) {
             city = res[res.length - 2];
             country = res[res.length - 1];
-            System.out.println(city);
-            System.out.println(country);
+            System.out.println("city: " + city);
+            System.out.println("country: " + country);
             postLocation.setText(city + ", " + country);
             postLocation.setError(null);
         } else if (res.length == 1) {
             country = res[res.length - 1];
-            System.out.println(country);
+            System.out.println("country: " + country);
             postLocation.setText(country);
             postLocation.setError(null);
         }
