@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -149,8 +153,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userName = dataSnapshot.child("name").getValue(String.class);
                 email = dataSnapshot.child("email").getValue(String.class);
+                styleName(userName);
 
-                home_headerTitle.setText(userName);
                 joined_date.setText(dataSnapshot.child("dateCreated").getValue(String.class));
 
                 if(dataSnapshot.child("profilePictureUrl").getValue(String.class) != null) {
@@ -185,6 +189,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+    }
+
+    private void styleName(String userName) {
+        String[] names = userName.split(" ");
+
+        userName = "";
+        for (int i = 0; i < names.length; ++i) {
+            userName += names[i] + "\n";
+        }
+
+        SpannableString ss = new SpannableString(userName);
+        int spaceIndex = userName.indexOf('\n');
+        System.out.println(spaceIndex);
+        ss.setSpan(new StyleSpan(Typeface.BOLD), 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        home_headerTitle.setText(ss);
     }
 
     private void initialPopulation(){
