@@ -70,8 +70,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
         //holder.author.setText("by " + post.getUserId() + ", " + post.getCreationDate());
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(Long.parseLong(post.getCreationDate()));
+        System.out.println("CAL: " + cal.toString());
         String date = DateFormat.format("dd MMM yyyy", cal).toString();
-        holder.author.setText(date);
+        holder.author.setText(post.getTravelDate());
         holder.postThumbnailTitle.setText(post.getTitle());
         Picasso.get()
                 .load(Uri.parse(post.getCoverImg()))
