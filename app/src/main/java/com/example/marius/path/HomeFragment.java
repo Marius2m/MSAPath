@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private View v;
-    private TextView nr_of_paths, nr_hearts, home_headerTitle;
+    private TextView nr_of_paths, joined_date, home_headerTitle;
     private RecyclerView recyclerView;
     private PostsAdapter mAdapter;
     private ImageView home_avatar;
@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mAdapter = new PostsAdapter(posts);
 
         nr_of_paths = v.findViewById(R.id.nr_of_paths);
-        nr_hearts = v.findViewById(R.id.nr_hearts);
+        joined_date = v.findViewById(R.id.joined_date);
         home_headerTitle = v.findViewById(R.id.home_headerTitle);
         home_avatar = v.findViewById(R.id.home_avatar);
         home_avatar.setOnClickListener(this);
@@ -149,7 +149,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userName = dataSnapshot.child("name").getValue(String.class);
                 email = dataSnapshot.child("email").getValue(String.class);
+
                 home_headerTitle.setText(userName);
+                joined_date.setText(dataSnapshot.child("dateCreated").getValue(String.class));
 
                 if(dataSnapshot.child("profilePictureUrl").getValue(String.class) != null) {
                     profilePictureUrl = dataSnapshot.child("profilePictureUrl").getValue(String.class);

@@ -52,7 +52,7 @@
                 android:layout_marginTop="40dp"
                 android:layout_marginEnd="64dp"
                 android:layout_marginBottom="8dp"
-                android:text="Marius"
+                android:text=" "
                 android:textColor="#fff"
                 android:textSize="32sp"
                 android:textStyle="bold"
@@ -116,7 +116,7 @@
                             android:id="@+id/nr_of_paths"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text=" "
                             android:textColor="@color/cardview_dark_background"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -132,17 +132,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Hearts"
+                            android:text="Joined"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="20sp" />
 
                         <TextView
-                            android:id="@+id/nr_hearts"
+                            android:id="@+id/joined_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingBottom="2dp"
                             android:textColor="@color/cardview_dark_background"
-                            android:text="5"
+                            android:text=" "
                             android:textSize="16sp" />
                     </LinearLayout>
 
