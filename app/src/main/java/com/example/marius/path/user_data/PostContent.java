@@ -8,7 +8,9 @@ public abstract class PostContent implements Serializable {
     public String content;
 
     @Exclude
-    protected int id = 0;
+    protected static final int VIEW_TYPE_PARAGRAPH = 1;
+    @Exclude
+    protected static final int VIEW_TYPE_IMAGE = 2;
 
     public PostContent(){}
 
@@ -22,9 +24,6 @@ public abstract class PostContent implements Serializable {
     public void setContent(String content){};
 
     @Exclude
-    public int getId(){
-        return id;
-    }
-
+    public abstract int getViewType();
 
 }

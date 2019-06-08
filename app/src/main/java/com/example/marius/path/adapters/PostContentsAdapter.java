@@ -19,7 +19,6 @@ import java.util.Random;
 
 public class PostContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<PostContent> contents;
-    Context context;
 
     public PostContentsAdapter(List<PostContent> strings) {
         System.out.println("ELGTH: " + strings.size());
@@ -52,18 +51,14 @@ public class PostContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Picasso.get()
                     .load(Uri.parse(s.getContent()))
                     .into(((ImageViewHolder) holder).image_view);
-
-//            ((ImageViewHolder) holder).paragraph_text_view.setText("imageeee");
         }
     }
 
     @Override
     public int getItemViewType(int position) {
         PostContent s = contents.get(position);
-        System.out.println("ITEM TYPE: " + s.getType());
-        if (s.getType().equals("paragraph"))
-            return 1;
-        return 2;
+
+        return s.getViewType();
     }
 
     @Override
@@ -76,18 +71,16 @@ public class PostContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public ParagraphViewHolder(View itemView) {
             super(itemView);
-            this.paragraph_text_view = (TextView) itemView.findViewById(R.id.paragraph_text_view);
+            this.paragraph_text_view = itemView.findViewById(R.id.paragraph_text_view);
         }
     }
 
     public class ImageViewHolder extends RecyclerView.ViewHolder {
         ImageView image_view;
-        TextView paragraph_text_view;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
             image_view = itemView.findViewById(R.id.image_image_view);
-//            this.paragraph_text_view = (TextView) itemView.findViewById(R.id.paragraph_text_view);
         }
     }
 }

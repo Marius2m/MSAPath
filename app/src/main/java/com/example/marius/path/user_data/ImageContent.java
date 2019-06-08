@@ -14,13 +14,8 @@ public class ImageContent extends PostContent{
         this.image = image;
     }
 
-    public ImageContent(int id){
-        this.id = id;
-    }
-
     public ImageContent(String image, int id){
         this.image = image;
-        this.id = id;
     }
 
     @Exclude @Override
@@ -30,6 +25,11 @@ public class ImageContent extends PostContent{
 
     @Override
     public void setContent(String ref){ this.image = ref; }
+
+    @Override @Exclude
+    public int getViewType() {
+        return this.VIEW_TYPE_IMAGE;
+    }
 
     @Override
     public String toString() {

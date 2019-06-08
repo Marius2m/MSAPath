@@ -17,6 +17,11 @@ public class MapContent extends PostContent {
         this.map = map;
     }
 
+    @Override @Exclude
+    public int getViewType() {
+        return 0;
+    }
+
     public MapContent(){
     }
 
