@@ -275,11 +275,12 @@ public class AddFragment extends Fragment {
 
         if (requestCode == PICK_IMG_REQ_CODE) {
             super.onActivityResult(requestCode, resultCode, data);
-            coverPhotoBtn.setText("  Change cover image");
-            headerTitle.setText("");
 
             if (requestCode == PICK_IMG_REQ_CODE && resultCode == RESULT_OK
                     && data != null && data.getData() != null) {
+                coverPhotoBtn.setText("  Change cover image");
+                headerTitle.setText("");
+
                 coverPhotoUri = data.getData();
 
                 Log.d("coverPhotoUri:", coverPhotoUri.toString());
