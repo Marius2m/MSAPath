@@ -14,6 +14,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -31,6 +34,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marius.path.adapters.PostContentsAdapter;
 import com.example.marius.path.user_data.ImageContent;
 import com.example.marius.path.user_data.ParagraphContent;
 import com.example.marius.path.user_data.PostContent;
@@ -51,9 +55,9 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-
 
 public class PostDataFragment extends Fragment {
     private DatabaseReference mDatabase;
@@ -61,18 +65,10 @@ public class PostDataFragment extends Fragment {
 
     private static final int PICK_IMG_REQ_CODE = 2;
 
-    private ScrollView scrollView;
-    private TextView test;
-    private RelativeLayout parentRLayout;
-    private ImageView mImageView;
-    private CoordinatorLayout coordinatorLayout;
-
     private Button doneBtn;
     private Button cancelBtn;
 
     private String postKey;
-    private int currentId = 0;
-    private int lineIndex = 0;
     private Uri mImageUri;
     private Uri coverImageUri;
     private int index = 0;
@@ -90,6 +86,11 @@ public class PostDataFragment extends Fragment {
 
     final Handler handler = new Handler();
 
+    private RecyclerView recyclerView;
+    private PostContentsAdapter mAdapter;
+    private ArrayList<PostContent> postContentsAdapter = new ArrayList<PostContent>();
+    private List<String> posts = new ArrayList<>();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -98,19 +99,12 @@ public class PostDataFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        parentRLayout = (RelativeLayout) v.findViewById(R.id.relativeLayoutId);
-        coordinatorLayout = (CoordinatorLayout) v.findViewById(R.id.coordinatorLayoutId);
-        test = (TextView) v.findViewById(R.id.row0);
-        currentId = test.getId();
-
         contentResolver = getContext().getContentResolver();
         mime = MimeTypeMap.getSingleton();
 
-        //mImageView = (ImageView) v.findViewById(R.id.img_view);
         doneBtn = (Button) v.findViewById(R.id.done_btn);
         cancelBtn = (Button) v.findViewById(R.id.cancel_btn);
 
-        Log.d("currentId test", ""+currentId);
         final FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fabtn);
         final FloatingActionButton picBtn = (FloatingActionButton) v.findViewById(R.id.fabPicture);
         FloatingActionButton textBtn = (FloatingActionButton) v.findViewById(R.id.fabText);
@@ -166,7 +160,6 @@ public class PostDataFragment extends Fragment {
 
                 builder.setView(mView);
                 final AlertDialog dialog = builder.create();
-                //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
                 dialog.setCancelable(false);
@@ -177,10 +170,11 @@ public class PostDataFragment extends Fragment {
                     public void onClick(View v) {
                         if(!paragraphText.getText().toString().isEmpty()){
                             Log.d("Dialog: text is: ", paragraphText.getText().toString());
-                           // Toast.makeText(getActivity(), paragraphText.getText().toString(), Toast.LENGTH_SHORT).show();
 
+                            postContents.add(new ParagraphContent(paragraphText.getText().toString()));
+                            postContentsAdapter.add(new ParagraphContent(paragraphText.getText().toString()));
+                            mAdapter.notifyItemInserted(mAdapter.getItemCount());
 
-                            parentRLayout.addView(createNewTextView(paragraphText.getText().toString(),10, 20));
                             dialog.dismiss();
                         }else{
                             Toast.makeText(getActivity(), "Empty", Toast.LENGTH_SHORT).show();
@@ -213,53 +207,17 @@ public class PostDataFragment extends Fragment {
             }
         });
 
-        doneBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        doneBtn.setOnClickListener(v1 -> {
 
-                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                userKey = firebaseUser.getUid();
-                Log.d("userKey", userKey);
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            userKey = firebaseUser.getUid();
+            Log.d("userKey", userKey);
 
-                postKey = mDatabase.child("posts").push().getKey();
-                path = "posts/ " + postKey + "/";
-                if(havePictures == true) {
-                    uploadCoverImg();
-                    //uploadPictures(pictureUris);
-                }else{
-                    postDataToFirebase();
-                }
+            postKey = mDatabase.child("posts").push().getKey();
+            path = "posts/ " + postKey + "/";
+            uploadCoverImg();
 
-
-
-
-
-                postData.printContent();
-//                final String postKey = mDatabase.child("posts").push().getKey();
-//                mDatabase.child("posts").child(postKey).setValue(postData)
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                //mDatabase.child("users").child(userKey).child("postsId").setValue(postKey);
-//
-//                                Toast.makeText(getActivity(), "Post created!", Toast.LENGTH_SHORT).show();
-//
-//                                handler.postDelayed(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
-//                                        fragmentT.replace(R.id.fragment_container, new AddFragment()).commit();                                    }
-//                                }, 2000);
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Toast.makeText(getActivity(), "Failed to post data. Make sure you have mobile data turned on!", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-
-            }
+            postData.printContent();
         });
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -304,6 +262,13 @@ public class PostDataFragment extends Fragment {
         Log.i("getPostData", postData.toString());
         Log.d("coverImageUri", coverImageUri.toString());
 
+        recyclerView = v.findViewById(R.id.test_recyler_view);
+        mAdapter = new PostContentsAdapter(postContentsAdapter);
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+
         return v;
     }
 
@@ -319,7 +284,11 @@ public class PostDataFragment extends Fragment {
                     public void onSuccess(Uri uri) {
                         Log.d("999", uri.toString() + "\n" + "postKey:" + postKey);
                         postData.setCoverImg(uri.toString());
-                        uploadPictures(pictureUris);
+
+                        if (havePictures)
+                            uploadPictures(pictureUris);
+                        else
+                            postDataToFirebase();
                     }
                 });
             }
@@ -343,13 +312,6 @@ public class PostDataFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        Handler handler = new Handler();
-//                        handler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                mProgressBar.setProgress(0);
-//                            }
-//                        }, 5000);
 
                         picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -459,70 +421,6 @@ public class PostDataFragment extends Fragment {
         }
     }
 
-    TextView createNewTextView(String text, int margin, int padding){
-        TextView newDynamicTextView = new TextView(getActivity());
-
-        /*String idName = "row"+lineIndex;
-        int lineId = Integer.parseInt(idName);
-        newDynamicTextView.setId(lineId);
-*/
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
-        );
-        layoutParams.setMargins(margin * 1, margin * 1, margin * 1, 1 * margin);
-        layoutParams.addRule(RelativeLayout.BELOW, currentId);
-        newDynamicTextView.setLayoutParams(layoutParams);
-
-        newDynamicTextView.setId(TextView.generateViewId());
-
-        currentId = newDynamicTextView.getId();
-        Log.d("currentId TXT", ""+currentId);
-        newDynamicTextView.setText(text);
-
-        newDynamicTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-        newDynamicTextView.setPadding(padding * 2, 0, padding * 2, padding * 1);
-
-        postContents.add(new ParagraphContent(text, currentId));
-
-        Log.d("newDynamicTxt:", newDynamicTextView.getText().toString());
-        return newDynamicTextView;
-    }
-
-    private ImageView createNewImageView(int margin, int padding){
-        ImageView newDynamicImageView = new ImageView(getActivity());
-
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
-        );
-        layoutParams.setMargins(margin * 1 , margin * 1, margin * 1, 1 * margin);
-        layoutParams.addRule(RelativeLayout.BELOW, currentId);
-        newDynamicImageView.setLayoutParams(layoutParams);
-
-        newDynamicImageView.setId(ImageView.generateViewId());
-
-        currentId = newDynamicImageView.getId();
-        Log.d("currentId IMG", ""+currentId);
-
-        newDynamicImageView.setPadding(padding * 2,0, padding * 2, padding * 1);
-        newDynamicImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        newDynamicImageView.setAdjustViewBounds(true);
-
-        // Native
-        //newDynamicImageView.setImageURI(mImageUri);
-
-        // Picassso API
-        Picasso.get().load(mImageUri).into(newDynamicImageView);
-
-        postContents.add(new ImageContent(currentId));
-
-        //pictureUris.add(mImageUri);
-        Log.d("newDynamicImg:", currentId+"");
-
-        havePictures = true;
-
-        return newDynamicImageView;
-    }
-
     private void chosePicture(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -542,10 +440,13 @@ public class PostDataFragment extends Fragment {
             pictureUris.add(temp);
             Log.d("mImageUri:", mImageUri.toString());
 
-            parentRLayout.addView(createNewImageView(10, 20));//createNewTextView(paragraphText.getText().toString(), 0, 10, 20));
+            postContents.add(new ImageContent());
+            havePictures = true;
 
-
-            //Picasso.get().load(mImageUri).into(mImageView);
+            ImageContent imageContent = new ImageContent();
+            imageContent.setContent(mImageUri.toString());
+            postContentsAdapter.add(imageContent);
+            mAdapter.notifyItemInserted(mAdapter.getItemCount());
         }
     }
 }

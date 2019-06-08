@@ -14,10 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:orientation="horizontal"
+        android:background="@color/colorPrimary"
         app:layout_anchor="@+id/coordinatorLayoutId"
         app:layout_anchorGravity="top|center"
-        android:paddingTop="5dp"
-        android:background="#fff"
+        android:paddingTop="4dp"
         >
 
         <Button
@@ -27,10 +27,10 @@
             android:layout_marginRight="45dp"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:text="Cancel"
             android:textAllCaps="false"
-            android:textColor="#000000"
+            android:textColor="#fff"
             />
 
         <TextView
@@ -42,8 +42,8 @@
             android:layout_marginRight="5dp"
             android:text="New Path"
             android:textAlignment="center"
-            android:textColor="#000"
-            android:textSize="20dp"
+            android:textColor="#fff"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <Button
@@ -54,43 +54,28 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:color="#00ffffff"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:text="Done"
             android:textAllCaps="false"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="#fff" />
     </LinearLayout>
 
-    <ScrollView
-        android:layout_marginTop="55dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/scrollViewId"
-        android:orientation="vertical"
-        android:fillViewport="true"
-        >
-
-    <RelativeLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/test_recyler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/relativeLayoutId">
-        <TextView
-            android:id="@+id/row0"
-            android:layout_marginTop="20dp"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:text="TextView"
-            />
-       <!-- <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/img_view"
-            android:background="@drawable/all_paths"
-            android:layout_below="@+id/row0"
+        android:paddingBottom="25dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6"/>
 
-            />
-            -->
-    </RelativeLayout>
-    </ScrollView>
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayoutId"
         android:layout_width="match_parent"
@@ -109,7 +94,8 @@
             app:backgroundTint="@color/colorPrimary"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
         <LinearLayout
             android:id="@+id/pictureLayout"
@@ -124,11 +110,13 @@
                 android:id="@+id/textView2"
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
-                android:text="New Picture" />
+                android:paddingTop="7dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                android:text=" New Picture " />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fabPicture"
@@ -153,11 +141,14 @@
                 android:id="@+id/textView"
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
-                android:text="New Paragraph" />
+                android:paddingTop="7dp"
+                android:text=" New Paragraph "
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fabText"
