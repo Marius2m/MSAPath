@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -64,6 +65,12 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
 
     private JsonPlaceholderApi jsonPlaceholderApi;
     private String prevSortLocation = null;
+    private String prevQueriedString = "";
+
+    int visibleItemCount = 0;
+    int totalItemCount = 0;
+    int pastVisibleItem = 0;
+    boolean isLoading = false;
 
     @Nullable
     @Override
@@ -97,16 +104,29 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
                 .build();
         jsonPlaceholderApi = retrofit.create(JsonPlaceholderApi.class);
 
-        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(mLayoutManager) {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if (prevSortLocation == null) {
-                    populatePostsDB();
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) {
+                    visibleItemCount = mLayoutManager.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    pastVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+                    if (!isLoading) {
+                        if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
+                            if (prevSortLocation == null) {
+                                populatePostsDB();
+                                isLoading = true;
+                                Toast.makeText(getActivity(), "From DB", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                filterPostsBasedOnString(searchBar.getText().toString(), prevSortLocation);
+                                Toast.makeText(getActivity(), "From CF", Toast.LENGTH_SHORT).show();
+                                isLoading = true;
+                            }
+                        }
+                    }
                 }
-                else {
-                    filterPostsBasedOnString(searchBar.getText().toString(), prevSortLocation);
-                }
-                Toast.makeText(getActivity(), "Last", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -284,8 +304,16 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.searchBtn: {
-                if (prevSortLocation == null)
-                    filterPostsBasedOnString(searchBar.getText().toString(), null);
+                View view = getActivity().getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getContext().
+                            getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+
+                filterPostsBasedOnString(searchBar.getText().toString(), null);
                 System.out.println(searchBar.getText().toString());
                 break;
             }
@@ -315,16 +343,24 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
                     return;
                 }
 
-                if (prevSortLocation_ == null)
-                    posts.clear();
-
                 System.out.println("Successful call with code: " + response.code());
                 FilteredPostsBySearch postsData = response.body();
 
+                String tempPrevSortLocation = postsData.prevSortLocation();
+                if (prevSortLocation != null && prevSortLocation.equals(tempPrevSortLocation)) {
+                    System.out.println("same prevSortLocation");
+                    return;
+                }
+                if (prevSortLocation == null || !prevQueriedString.equals(queryString))
+                    posts.clear();
+
+                prevQueriedString = queryString;
                 posts.addAll(postsData.getPosts());
                 System.out.println("Current prevPostId: " + postsData.prevSortLocation());
-                prevSortLocation = postsData.prevSortLocation();
+                prevSortLocation = tempPrevSortLocation;
+
                 mAdapter.notifyDataSetChanged();
+                isLoading = false;
             }
 
             @Override
