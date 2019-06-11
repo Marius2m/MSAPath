@@ -1,6 +1,7 @@
 package com.example.marius.path.services;
 
 import com.example.marius.path.data_model.CommentC;
+import com.example.marius.path.data_model.FilteredPostsBySearch;
 import com.example.marius.path.data_model.GlobePosts;
 import com.example.marius.path.data_model.Post;
 
@@ -37,6 +38,17 @@ public interface JsonPlaceholderApi {
             @Query("longitude") Double longitude
     );
 
+    @GET("searchByString")
+    @Headers("Content-Type:application/json")
+    Call<FilteredPostsBySearch>searchByString(
+            @Query("queryString") String queryString,
+            @Query("prevSortLocation") String prevSortLocation
+    );
+
+//    @GET("searchByString")
+//    @Headers("Content-Type:application/json")
+
+
     @DELETE("fakeDelete")
     @Headers("Content-Type:application/json")
     Call<Void> deleteProfile();
@@ -49,6 +61,7 @@ public interface JsonPlaceholderApi {
 //            @Query("_order") String order
 //    );
 
+    // examples
     @GET("posts")
     Call<List<Post>> getPosts(@QueryMap Map<String, String> parameters);
 

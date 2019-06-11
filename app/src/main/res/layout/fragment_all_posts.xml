@@ -46,6 +46,7 @@
             android:layout_marginRight="2.5dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="0.15"
+            android:onClick="onClick"
             android:background="#fafafafa"
             android:src="@mipmap/search_icon" />
 

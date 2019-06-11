@@ -21,7 +21,6 @@ public class PostContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<PostContent> contents;
 
     public PostContentsAdapter(List<PostContent> strings) {
-        System.out.println("ELGTH: " + strings.size());
         this.contents = strings;
     }
 

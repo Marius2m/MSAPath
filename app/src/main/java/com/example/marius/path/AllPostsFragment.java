@@ -13,10 +13,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marius.path.adapters.PostsAdapter;
+import com.example.marius.path.data_model.FilteredPostsBySearch;
+import com.example.marius.path.data_model.GlobePosts;
 import com.example.marius.path.data_model.IndividualPost;
+import com.example.marius.path.services.JsonPlaceholderApi;
 import com.example.marius.path.user_data.EndlessRecyclerViewScrollListener;
 import com.example.marius.path.user_data.ImageContent;
 import com.example.marius.path.user_data.MapContent;
@@ -30,12 +37,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-public class AllPostsFragment extends Fragment {
+
+public class AllPostsFragment extends Fragment implements View.OnClickListener {
     private View v;
     private List<IndividualPost> posts = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -43,6 +58,12 @@ public class AllPostsFragment extends Fragment {
     private DatabaseReference mDatabase;
     private String oldestPostId;
     private UserAccount userAccount;
+
+    private ImageButton searchBtn, sortBtn;
+    private EditText searchBar;
+
+    private JsonPlaceholderApi jsonPlaceholderApi;
+    private String prevSortLocation = null;
 
     @Nullable
     @Override
@@ -59,15 +80,32 @@ public class AllPostsFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
+        searchBtn = v.findViewById(R.id.searchBtn);
+        searchBtn.setOnClickListener(this);
+        sortBtn = v.findViewById(R.id.sortBtn);
+        sortBtn.setOnClickListener(this);
+        searchBar = v.findViewById(R.id.searchBar);
+
         //populatePosts();
         initialPopulatePostsFromDB();
         mAdapter.notifyDataSetChanged();
 
+        Gson gson = new GsonBuilder().setLenient().create();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://us-central1-msapath-c1831.cloudfunctions.net/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        jsonPlaceholderApi = retrofit.create(JsonPlaceholderApi.class);
 
         recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(mLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                populatePostsDB();
+                if (prevSortLocation == null) {
+                    populatePostsDB();
+                }
+                else {
+                    filterPostsBasedOnString(searchBar.getText().toString(), prevSortLocation);
+                }
                 Toast.makeText(getActivity(), "Last", Toast.LENGTH_SHORT).show();
             }
         });
@@ -238,6 +276,60 @@ public class AllPostsFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.searchBtn: {
+                if (prevSortLocation == null)
+                    filterPostsBasedOnString(searchBar.getText().toString(), null);
+                System.out.println(searchBar.getText().toString());
+                break;
+            }
+
+            case R.id.sortBtn: {
+                System.out.println("PREV IS: " + prevSortLocation);
+            }
+
+            default:
+                break;
+        }
+    }
+
+    private void filterPostsBasedOnString(String queryString, String prevSortLocation_) {
+        Call<FilteredPostsBySearch> call = jsonPlaceholderApi.searchByString(queryString, prevSortLocation_);
+
+        call.enqueue(new Callback<FilteredPostsBySearch>() {
+            @Override
+            public void onResponse(Call<FilteredPostsBySearch> call, Response<FilteredPostsBySearch> response) {
+                if(!response.isSuccessful()) {
+                    System.out.println("Unsuccessful call");
+                    return;
+                }
+
+                if(response.code() == 204) {
+                    System.out.println("No posts");
+                    return;
+                }
+
+                if (prevSortLocation_ == null)
+                    posts.clear();
+
+                System.out.println("Successful call with code: " + response.code());
+                FilteredPostsBySearch postsData = response.body();
+
+                posts.addAll(postsData.getPosts());
+                System.out.println("Current prevPostId: " + postsData.prevSortLocation());
+                prevSortLocation = postsData.prevSortLocation();
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<FilteredPostsBySearch> call, Throwable t) {
+                System.out.println("Failed to perform GET");
             }
         });
     }
