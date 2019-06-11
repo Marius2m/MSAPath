@@ -58,7 +58,6 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
     private PostsAdapter mAdapter;
     private DatabaseReference mDatabase;
     private String oldestPostId;
-    private UserAccount userAccount;
 
     private ImageButton searchBtn, sortBtn;
     private EditText searchBar;
@@ -93,7 +92,6 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
         sortBtn.setOnClickListener(this);
         searchBar = v.findViewById(R.id.searchBar);
 
-        //populatePosts();
         initialPopulatePostsFromDB();
         mAdapter.notifyDataSetChanged();
 
@@ -133,12 +131,6 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
-//    private void populatePosts(){
-//        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_1", "5","Venice", "Marius Mircea"));
-//        posts.add(new IndividualPost("1547220397", "15 MAR 2019", "MOCK_DATA_2", "3","Francee", "Karina Ciupa"));
-//        posts.add(new IndividualPost("1547220397", "13 FEB 2019", "MOCK_DATA_3", "2","Tokyyo", "Andrei Lazor"));
-//    }
-
     private void initialPopulatePostsFromDB(){
         mDatabase.limitToFirst(4).addValueEventListener(new ValueEventListener() {
             @Override
@@ -149,60 +141,10 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
 
                     List<PostContent> typePostContents = new ArrayList<>();
 
-//                    for(DataSnapshot contentList: postSnapShot.child("contents").getChildren()){
-//                        for(DataSnapshot content: contentList.getChildren()) {
-//                            if(content.getKey().equals("paragraph")){
-//                                typePostContents.add(new ParagraphContent(content.getValue().toString()));
-//                            }else if(content.getKey().equals("map")){
-//                                typePostContents.add(new MapContent(content.getValue().toString()));
-//                            }else if(content.getKey().equals("image")){
-//                                typePostContents.add(new ImageContent(content.getValue().toString()));
-//                            }
-////                            System.out.println("ZZ 1: " + content.getKey());
-////                            System.out.println("ZZ 2: " + content.getValue());
-//                        }
-////                        System.out.println("YY 1" + contentList.getKey());
-////                        System.out.println("YY 2" + contentList.getValue());
-//                    }
-
                     oldestPostId = postSnapShot.getKey();
                     Log.d("POSTIDS:", oldestPostId);
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
                     indivPost.setPostId(oldestPostId);
-
-                    /*
-                    FirebaseDatabase.getInstance().getReference("/users").child(indivPost.getUserId()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            System.out.println("user DATA HERE: " + dataSnapshot.getValue());
-                            userAccount = dataSnapshot.getValue(UserAccount.class);
-                            System.out.println("Full Data::: " + userAccount.getName() + " " + userAccount.getDateCreated() + " " + userAccount.getEmail() + " " + userAccount.getAge());
-
-                            indivPost.setUserId(userAccount.getName());
-                            System.out.println("[1] ACC NAME: " + indivPost.getUserId());
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                    */
-
-//                    FirebaseDatabase.getInstance().getReference("/users").child(indivPost.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            System.out.println("user DATA HERE: " + dataSnapshot.getValue());
-//                            userAccount = dataSnapshot.getValue(UserAccount.class);
-//                            System.out.println("Full Data::: " + userAccount.getName() + " " + userAccount.getDateCreated() + " " + userAccount.getEmail() + " " + userAccount.getAge());
-//
-//                            indivPost.setUserId(userAccount.getName());
-//                            System.out.println("[1] ACC NAME: " + indivPost.getUserId());
-//                        }
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                        }
-//                    });
 
                     postsDB.add(indivPost);
 
@@ -228,61 +170,9 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
 
                 for(DataSnapshot postSnapShot : dataSnapshot.getChildren()){
 
-//                    List<PostContent> typePostContents = new ArrayList<>();
-
-//                    for(DataSnapshot contentList: postSnapShot.child("contents").getChildren()){
-//                        for(DataSnapshot content: contentList.getChildren()) {
-//                            if(content.getKey().equals("paragraph")){
-//                                typePostContents.add(new ParagraphContent(content.getValue().toString()));
-//                            }else if(content.getKey().equals("map")){
-//                                typePostContents.add(new MapContent(content.getValue().toString()));
-//                            }else if(content.getKey().equals("image")){
-//                                typePostContents.add(new ImageContent(content.getValue().toString()));
-//                            }
-////                            System.out.println("ZZ 1: " + content.getKey());
-////                            System.out.println("ZZ 2: " + content.getValue());
-//                        }
-////                        System.out.println("YY 1" + contentList.getKey());
-////                        System.out.println("YY 2" + contentList.getValue());
-//                    }
-
                     oldestPostId = postSnapShot.getKey();
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
                     indivPost.setPostId(oldestPostId);
-
-                    /*
-                    FirebaseDatabase.getInstance().getReference("/users").child(indivPost.getUserId()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            System.out.println("user DATA HERE: " + dataSnapshot.getValue());
-                            userAccount = dataSnapshot.getValue(UserAccount.class);
-                            System.out.println("Full Data::: " + userAccount.getName() + " " + userAccount.getDateCreated() + " " + userAccount.getEmail() + " " + userAccount.getAge());
-
-                            indivPost.setUserId(userAccount.getName());
-                            System.out.println("[1] ACC NAME: " + indivPost.getUserId());
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                    */
-
-//                    FirebaseDatabase.getInstance().getReference("/users").child(indivPost.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            System.out.println("user DATA HERE: " + dataSnapshot.getValue());
-//                            userAccount = dataSnapshot.getValue(UserAccount.class);
-//                            System.out.println("Full Data::: " + userAccount.getName() + " " + userAccount.getDateCreated() + " " + userAccount.getEmail() + " " + userAccount.getAge());
-//
-//                            indivPost.setUserId(userAccount.getName());
-//                            System.out.println("[1] ACC NAME: " + indivPost.getUserId());
-//                        }
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                        }
-//                    });
 
                     postsDB.add(indivPost);
                     Log.d("ShowPostId", oldestPostId);
