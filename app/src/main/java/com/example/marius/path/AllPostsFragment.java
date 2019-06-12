@@ -88,8 +88,8 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
 
         searchBtn = v.findViewById(R.id.searchBtn);
         searchBtn.setOnClickListener(this);
-        sortBtn = v.findViewById(R.id.sortBtn);
-        sortBtn.setOnClickListener(this);
+//        sortBtn = v.findViewById(R.id.sortBtn);
+//        sortBtn.setOnClickListener(this);
         searchBar = v.findViewById(R.id.searchBar);
 
         initialPopulatePostsFromDB();
@@ -105,14 +105,18 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                System.out.println("Entered onScrolled");
                 if (dy > 0) {
+                    System.out.println("Entered dy > 0");
                     visibleItemCount = mLayoutManager.getChildCount();
                     totalItemCount = mLayoutManager.getItemCount();
                     pastVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
                     if (!isLoading) {
+                        System.out.println("Entered !isLoading");
                         if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
-                            if (prevSortLocation == null) {
+                            System.out.println("Entered last if");
+                            if (prevSortLocation == null || searchBar.getText().toString().isEmpty()) {
                                 populatePostsDB();
                                 isLoading = true;
                                 Toast.makeText(getActivity(), "From DB", Toast.LENGTH_SHORT).show();
@@ -178,6 +182,7 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
                     Log.d("ShowPostId", oldestPostId);
                 }
 
+                isLoading = false;
                 postsDB.remove(0);
                 posts.addAll(postsDB);
                 mAdapter.notifyDataSetChanged();
@@ -208,9 +213,9 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
                 break;
             }
 
-            case R.id.sortBtn: {
-                System.out.println("PREV IS: " + prevSortLocation);
-            }
+//            case R.id.sortBtn: {
+//                System.out.println("PREV IS: " + prevSortLocation);
+//            }
 
             default:
                 break;

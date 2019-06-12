@@ -46,21 +46,9 @@
             android:layout_marginRight="2.5dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="0.15"
+            android:background="#fafafafa"
             android:onClick="onClick"
-            android:background="#fafafafa"
             android:src="@mipmap/search_icon" />
-
-        <ImageButton
-            android:id="@+id/sortBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2.5dp"
-            android:layout_marginTop="16.5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="0.15"
-            android:background="#fafafafa"
-            android:src="@mipmap/sort_icon" />
 
     </LinearLayout>
 

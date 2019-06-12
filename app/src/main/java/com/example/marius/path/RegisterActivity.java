@@ -225,6 +225,7 @@ public class RegisterActivity extends AppCompatActivity {
                 avatarUri = result.getUri();
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
+                System.out.println("ERR: " + error.toString());
             }
         }
         Picasso.get()

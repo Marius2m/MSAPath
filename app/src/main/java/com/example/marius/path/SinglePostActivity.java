@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -209,7 +210,7 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         ImageView newDynamicImageView = new ImageView(this.getApplicationContext());
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT
         );
         layoutParams.setMargins(margin * 1 , margin * 1, margin * 1, 1 * margin);
         layoutParams.addRule(RelativeLayout.BELOW, currentId);
