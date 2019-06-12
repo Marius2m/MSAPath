@@ -91,8 +91,8 @@ public class SearchFragment extends Fragment {
 
         cardView = v.findViewById(R.id.cardViewAll);
         cardView.setOnClickListener(view -> {
-            FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
-            fragmentT.replace(R.id.fragment_container, new AllPostsFragment()).commit();
+            Intent intent = new Intent(getContext(), AllPostsActivity.class);
+            startActivity(intent);
         });
 
         cardViewMap = v.findViewById(R.id.cardViewMap);

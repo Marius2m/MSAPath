@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,7 +52,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class AllPostsFragment extends Fragment implements View.OnClickListener {
+public class AllPostsActivity extends AppCompatActivity implements View.OnClickListener {
     private View v;
     private List<IndividualPost> posts = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -71,26 +72,23 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
     int pastVisibleItem = 0;
     boolean isLoading = false;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_all_posts, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_all_posts);
 
         mDatabase = FirebaseDatabase.getInstance().getReference("/posts");
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         mAdapter = new PostsAdapter(posts);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
-        searchBtn = v.findViewById(R.id.searchBtn);
+        searchBtn = findViewById(R.id.searchBtn);
         searchBtn.setOnClickListener(this);
-//        sortBtn = v.findViewById(R.id.sortBtn);
-//        sortBtn.setOnClickListener(this);
-        searchBar = v.findViewById(R.id.searchBar);
+        searchBar = findViewById(R.id.searchBar);
 
         initialPopulatePostsFromDB();
         mAdapter.notifyDataSetChanged();
@@ -119,11 +117,11 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
                             if (prevSortLocation == null || searchBar.getText().toString().isEmpty()) {
                                 populatePostsDB();
                                 isLoading = true;
-                                Toast.makeText(getActivity(), "From DB", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "From DB", Toast.LENGTH_SHORT).show();
                             }
                             else {
                                 filterPostsBasedOnString(searchBar.getText().toString(), prevSortLocation);
-                                Toast.makeText(getActivity(), "From CF", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "From CF", Toast.LENGTH_SHORT).show();
                                 isLoading = true;
                             }
                         }
@@ -132,7 +130,6 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        return v;
     }
 
     private void initialPopulatePostsFromDB(){
@@ -197,18 +194,20 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    public void hideSoftKeyboard() {
+        View view = getCurrentFocus();
+        if(view != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null)
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.searchBtn: {
-                View view = getActivity().getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getContext().
-                            getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                }
+                hideSoftKeyboard();
 
                 filterPostsBasedOnString(searchBar.getText().toString(), null);
                 System.out.println(searchBar.getText().toString());
