@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,22 +22,21 @@ import com.example.marius.path.data_model.IndividualPost;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHolder> {
+public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<IndividualPost> posts;
-    Context context;
+    private Context context;
+    private static final int TYPE_USER_POST = 0;
+    private static final int TYPE_SELF_POST = 1;
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
-        public ImageView thumbnail;
-        public TextView location, author, postThumbnailTitle;
-        public CardView cardView;
-        public ImageView coverImg;
-        public ImageButton deleteBtn;
+        TextView location, author, postThumbnailTitle;
+        CardView cardView;
+        ImageView coverImg;
+        ImageButton deleteBtn;
 
-        public CustomViewHolder(View view){
+        CustomViewHolder(View view){
             super(view);
             location = view.findViewById(R.id.postLocationDays);
             author = view.findViewById(R.id.authorPost);
@@ -49,29 +47,54 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
         }
     }
 
+    public class UserPostViewHolder extends RecyclerView.ViewHolder{
+        TextView location, author, postThumbnailTitle;
+        CardView cardView;
+        ImageView coverImg;
+
+        UserPostViewHolder(View view){
+            super(view);
+            location = view.findViewById(R.id.postLocationDays2);
+            author = view.findViewById(R.id.authorPost2);
+            postThumbnailTitle = view.findViewById(R.id.postThumbnailTitle2);
+            cardView = view.findViewById(R.id.cardPostView2);
+            coverImg = view.findViewById(R.id.coverImg2);
+        }
+    }
     public PostsAdapter(List<IndividualPost> posts){
         this.posts = posts;
     }
 
     @NonNull
     @Override
-    public PostsAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.post_list, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView;
         context = parent.getContext();
-        return new CustomViewHolder(itemView);
+
+        if (viewType == TYPE_USER_POST) {
+            itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.user_post_list, parent, false);
+            return new UserPostViewHolder(itemView);
+        } else {
+            itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.post_list, parent, false);
+            return new CustomViewHolder(itemView);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PostsAdapter.CustomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder.getItemViewType() == TYPE_USER_POST) {
+            setUserPostWidgets((UserPostViewHolder)holder, position);
+        } else {
+            setSelfPostWidgets((CustomViewHolder)holder, position);
+        }
+    }
+
+    private void setSelfPostWidgets(CustomViewHolder holder, int position) {
         final IndividualPost post = posts.get(position);
 
         holder.location.setText(post.getLocation() + " in " + post.getNrDays() + " days");
-        //holder.author.setText("by " + post.getUserId() + ", " + post.getCreationDate());
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(Long.parseLong(post.getCreationDate()));
-        System.out.println("CAL: " + cal.toString());
-        String date = DateFormat.format("dd MMM yyyy", cal).toString();
         holder.author.setText(post.getTravelDate());
         holder.postThumbnailTitle.setText(post.getTitle());
         Picasso.get()
@@ -81,9 +104,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
                 .into(holder.coverImg);
 
         holder.deleteBtn.setOnClickListener(v -> {
-//                DialogFragment dialog = new DeletePostDialog();
-//                dialog.setTargetFragment(this, );
-//                dialog.show(etFragmentManager(), "tag");
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("Delete Path")
                     .setMessage("Are you sure you want to delete this path? Action cannot be undone.")
@@ -106,18 +126,45 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.CustomViewHo
             alert.show();
         });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), SinglePostActivity.class);
+        holder.itemView.setOnClickListener(v -> {
+            Intent i = new Intent(v.getContext(), SinglePostActivity.class);
+            i.putExtra("postObject",(Serializable) post);
+            context.startActivity(i);
 
-                System.out.println("SENDING TO NEW PAGE:" + post.toString());
-                i.putExtra("postObject",(Serializable) post);
-
-                context.startActivity(i);
-                Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void setUserPostWidgets(UserPostViewHolder holder, int position) {
+        final IndividualPost post = posts.get(position);
+
+        holder.location.setText(post.getLocation() + " in " + post.getNrDays() + " days");
+        holder.author.setText(post.getTravelDate());
+        holder.postThumbnailTitle.setText(post.getTitle());
+        Picasso.get()
+                .load(Uri.parse(post.getCoverImg()))
+                .centerCrop()
+                .fit()
+                .into(holder.coverImg);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent i = new Intent(v.getContext(), SinglePostActivity.class);
+            i.putExtra("postObject",(Serializable) post);
+
+            context.startActivity(i);
+            Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        IndividualPost post = posts.get(position);
+
+        if (post.getType() == IndividualPost.PostType.USER_POST) {
+            return TYPE_USER_POST;
+        }
+
+        return TYPE_SELF_POST;
     }
 
     @Override

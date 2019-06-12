@@ -1,8 +1,15 @@
 package com.example.marius.path.data_model;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 
 public class IndividualPost implements Serializable {
+    public enum PostType {
+        USER_POST,
+        SELF_POST;
+    }
+
     private String title; //5
     private String location; //3
     private String userId; //7
@@ -13,6 +20,19 @@ public class IndividualPost implements Serializable {
     private String coverImg; //1
     private Double latitude;
     private Double longitude;
+
+    @Exclude
+    private PostType type = PostType.SELF_POST;
+
+    @Exclude
+    public PostType getType() {
+        return type;
+    }
+
+    @Exclude
+    public void setType(PostType type) {
+        this.type = type;
+    }
 
     public IndividualPost(){}
 

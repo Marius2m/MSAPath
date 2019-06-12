@@ -149,6 +149,7 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
                     Log.d("POSTIDS:", oldestPostId);
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
                     indivPost.setPostId(oldestPostId);
+                    indivPost.setType(IndividualPost.PostType.USER_POST);
 
                     postsDB.add(indivPost);
 
@@ -177,6 +178,7 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
                     oldestPostId = postSnapShot.getKey();
                     final IndividualPost indivPost = postSnapShot.getValue(IndividualPost.class);
                     indivPost.setPostId(oldestPostId);
+                    indivPost.setType(IndividualPost.PostType.USER_POST);
 
                     postsDB.add(indivPost);
                     Log.d("ShowPostId", oldestPostId);
@@ -251,6 +253,9 @@ public class AllPostsFragment extends Fragment implements View.OnClickListener {
 
                 prevQueriedString = queryString;
                 posts.addAll(postsData.getPosts());
+                for (IndividualPost post: posts) {
+                    post.setType(IndividualPost.PostType.USER_POST);
+                }
                 System.out.println("Current prevPostId: " + postsData.prevSortLocation());
                 prevSortLocation = tempPrevSortLocation;
 
