@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +62,7 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
     private DatabaseReference mDatabase;
     private String oldestPostId;
 
-    private ImageButton searchBtn, sortBtn;
+    private ImageButton searchBtn, clearTextBtn;
     private EditText searchBar;
 
     private JsonPlaceholderApi jsonPlaceholderApi;
@@ -71,6 +73,7 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
     int totalItemCount = 0;
     int pastVisibleItem = 0;
     boolean isLoading = false;
+    boolean hasFetchedFilteredPosts = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +92,8 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
         searchBtn = findViewById(R.id.searchBtn);
         searchBtn.setOnClickListener(this);
         searchBar = findViewById(R.id.searchBar);
+        clearTextBtn = findViewById(R.id.clearTextBtn);
+        clearTextBtn.setOnClickListener(this);
 
         initialPopulatePostsFromDB();
         mAdapter.notifyDataSetChanged();
@@ -99,6 +104,27 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         jsonPlaceholderApi = retrofit.create(JsonPlaceholderApi.class);
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (clearTextBtn.getVisibility() == View.GONE) {
+                    clearTextBtn.setVisibility(View.VISIBLE);
+                } else {
+                    if (searchBar.getText().toString().isEmpty()) {
+                        clearTextBtn.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -214,9 +240,20 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             }
 
-//            case R.id.sortBtn: {
-//                System.out.println("PREV IS: " + prevSortLocation);
-//            }
+            case R.id.clearTextBtn: {
+                searchBar.setText("");
+
+                if (hasFetchedFilteredPosts) {
+                    posts.clear();
+                    initialPopulatePostsFromDB();
+                    hasFetchedFilteredPosts = false;
+
+                    prevSortLocation = null;
+                    prevQueriedString = "";
+                }
+                clearTextBtn.setVisibility(View.GONE);
+                System.out.println("PREV IS: " + prevSortLocation);
+            }
 
             default:
                 break;
@@ -235,6 +272,7 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 if(response.code() == 204) {
+                    Toast.makeText(AllPostsActivity.this, "No posts found.", Toast.LENGTH_SHORT).show();
                     System.out.println("No posts");
                     return;
                 }
@@ -257,6 +295,7 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
                 }
                 System.out.println("Current prevPostId: " + postsData.prevSortLocation());
                 prevSortLocation = tempPrevSortLocation;
+                hasFetchedFilteredPosts = true;
 
                 mAdapter.notifyDataSetChanged();
                 isLoading = false;
