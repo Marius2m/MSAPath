@@ -36,10 +36,10 @@ public class GlobePostsAdapter extends RecyclerView.Adapter<GlobePostsAdapter.Cu
 
         public CustomViewHolder(View view){
             super(view);
-            location = (TextView) view.findViewById(R.id.postLocationDays);
-            author = (TextView) view.findViewById(R.id.authorPost);
-            postThumbnailTitle = (TextView) view.findViewById(R.id.postThumbnailTitle);
-            cardView = (CardView) view.findViewById(R.id.cardPostView);
+            location = view.findViewById(R.id.postLocationDays);
+            author = view.findViewById(R.id.authorPost);
+            postThumbnailTitle = view.findViewById(R.id.postThumbnailTitle);
+            cardView = view.findViewById(R.id.cardPostView);
             coverImg = view.findViewById(R.id.coverImg);
         }
     }
@@ -62,11 +62,10 @@ public class GlobePostsAdapter extends RecyclerView.Adapter<GlobePostsAdapter.Cu
         final IndividualPost post = posts.get(position);
 
         holder.location.setText(post.getLocation() + " in " + post.getNrDays() + " days");
-        //holder.author.setText("by " + post.getUserId() + ", " + post.getCreationDate());
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(Long.parseLong(post.getCreationDate()));
-        String date = DateFormat.format("dd MMM yyyy", cal).toString();
-        holder.author.setText(date);
+        holder.author.setText(post.getTravelDate());
+//        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+//        cal.setTimeInMillis(Long.parseLong(post.getCreationDate()));
+//        String date = DateFormat.format("dd MMM yyyy", cal).toString();
         holder.postThumbnailTitle.setText(post.getTitle());
         Picasso.get()
                 .load(Uri.parse(post.getCoverImg()))
@@ -74,17 +73,14 @@ public class GlobePostsAdapter extends RecyclerView.Adapter<GlobePostsAdapter.Cu
                 .fit()
                 .into(holder.coverImg);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), SinglePostActivity.class);
+        holder.itemView.setOnClickListener(v -> {
+            Intent i = new Intent(v.getContext(), SinglePostActivity.class);
 
-                System.out.println("SENDING TO NEW PAGE:" + post.toString());
-                i.putExtra("postObject",(Serializable) post);
+            System.out.println("SENDING TO NEW PAGE:" + post.toString());
+            i.putExtra("postObject",(Serializable) post);
 
-                context.startActivity(i);
-                Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
-            }
+            context.startActivity(i);
+            Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
         });
     }
 
