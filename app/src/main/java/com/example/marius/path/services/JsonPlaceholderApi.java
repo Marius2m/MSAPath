@@ -4,6 +4,7 @@ import com.example.marius.path.data_model.CommentC;
 import com.example.marius.path.data_model.FilteredPostsBySearch;
 import com.example.marius.path.data_model.GlobePosts;
 import com.example.marius.path.data_model.Post;
+import com.example.marius.path.data_model.ReverseGeocoding;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,13 @@ public interface JsonPlaceholderApi {
     Call<FilteredPostsBySearch>searchByString(
             @Query("queryString") String queryString,
             @Query("prevSortLocation") String prevSortLocation
+    );
+
+    @GET("maps/api/geocode/json")
+    @Headers("Content-Type:application/json")
+    Call<ReverseGeocoding>getCountry(
+            @Query("latlng") String latLong,
+            @Query("key") String apiKey
     );
 
 //    @GET("searchByString")

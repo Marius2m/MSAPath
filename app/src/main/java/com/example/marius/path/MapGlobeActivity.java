@@ -39,6 +39,8 @@ import com.example.marius.path.data_model.CommentC;
 import com.example.marius.path.data_model.GlobePosts;
 import com.example.marius.path.data_model.IndividualPost;
 import com.example.marius.path.data_model.Post;
+import com.example.marius.path.data_model.ReverseGeocoding;
+import com.example.marius.path.data_model.ReverseGeocodingResults;
 import com.example.marius.path.services.JsonPlaceholderApi;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -71,7 +73,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
     private MapView mMapView;
-    private TextView textView4, textView5;
+    private TextView textView4;
     private Button showPathsFromHere;
     GoogleMap mapObj;
     Circle mapCircle;
@@ -96,6 +98,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     private JsonPlaceholderApi jsonPlaceholderApi;
+    private JsonPlaceholderApi jsonPlaceholderApi_2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,6 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         mMapView.getMapAsync(this);
 
         textView4 = findViewById(R.id.textView4);
-        textView5 = findViewById(R.id.textView5);
         showPathsFromHere = findViewById(R.id.showPathsFromHere);
         showPathsFromHere.setOnClickListener(this);
 
@@ -164,7 +166,6 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void calculateLocationOnScreen() {
-        textView4.setText(" ");
         if(mapCircle != null){
             mapCircle.remove();
         }
@@ -192,7 +193,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                 .radius(radiusInMeters/2)
                 .strokeColor(0xFF303F9F)
                 .fillColor(Color.argb(70, 61, 81,181)));
-//        textView5.setText("KMs: " + Double.toString(radiusInKm/2));
+//        textView4.setText("KMs: " + Double.toString(radiusInKm/2));
 
         Double cameraTempLat = mapObj.getCameraPosition().target.latitude;
         Double cameraTempLng = mapObj.getCameraPosition().target.longitude;
@@ -215,7 +216,6 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void getMorePosts() {
-
         Call<GlobePosts> call = jsonPlaceholderApi.getMorePosts(
                 foundCountry,
                 prevPostId,
@@ -258,62 +258,69 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         });
     }
 
-    private void getCountryFromGeo() {
-        final List<Address> addresses = new ArrayList<>();
+    private void getFirstPosts() {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("https://jsonplaceholder.typicode.com/")
+                .baseUrl("https://maps.googleapis.com/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
 
-        try {
-            fetchedCountry = true;
-            Geocoder geo = new Geocoder(this.getApplicationContext(), Locale.getDefault());
-            addresses.addAll(geo.getFromLocation(cameraLatitude, cameraLongitude, 1));
+        jsonPlaceholderApi_2 = retrofit.create(JsonPlaceholderApi.class);
 
-            if (addresses.isEmpty()) {
-                textView4.append("Please pick a continent or a country\n");
-                fetchedCountry = true;
-            } else {
-                if (addresses.size() > 0) {
-                    fetchedCountry = false;
-                    foundCountry = addresses.get(0).getCountryName();
-                    textView4.append("Normal: " + addresses.get(0).getCountryName());
+        String latLng = cameraLatitude.toString() + "," + cameraLongitude.toString();
+        Call<ReverseGeocoding> call_2 = jsonPlaceholderApi_2.getCountry(
+                latLng,
+                "AIzaSyCOQ_ozH1XcGufyOqRnKjr3IUdU5YMdUl4"
+        );
+
+        call_2.enqueue(new Callback<ReverseGeocoding>() {
+            @Override
+            public void onResponse(Call<ReverseGeocoding> call, Response<ReverseGeocoding> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Invalid response", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                ReverseGeocoding res = response.body();
+
+                if (res.getStatus().equals("ZERO_RESULTS")) {
+                    Toast.makeText(getApplicationContext(), "The center of the screen must be a country!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (res.getStatus().equals("OK")) {
+                    System.out.println("res IS: " + res.getPlus_code().get("compound_code"));
+                    if (res.getPlus_code().get("compound_code") == null) {
+                        String[] parsedAddress = res.getResults().get(0).getFormatted_address().split(" ");
+                        foundCountry = parsedAddress[parsedAddress.length - 1 ];
+                        System.out.println("[1] Extracted country: " + "[" + foundCountry + "]");
+                    } else {
+                        String[] parsedLocation = res.getPlus_code().get("compound_code").split(" ");
+                        foundCountry = parsedLocation[parsedLocation.length - 1];
+                        System.out.println("[2] Extracted country: " + "[" + foundCountry + "]");
+                    }
+
+                    Call<GlobePosts> callGetFirstPosts = jsonPlaceholderApi.getFirstPosts(
+                            foundCountry,
+                            radiusInKm/2,
+                            cameraLatitude,
+                            cameraLongitude
+                    );
+
+                    enqueuePostsCall(callGetFirstPosts, "No posts found in this region!");
+                    return;
                 }
             }
 
-        } catch (Exception e) {
-            Toast.makeText(this, "No Location Name Found", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void getFirstPosts() {
-        getCountryFromGeo();
-        if (fetchedCountry) {
-            return;
-        }
-//        if(fetchedCountry) {
-//            Toast.makeText(this, "Before handler", Toast.LENGTH_LONG).show();
-//
-//            Handler handler = new Handler();
-//            Runnable r = new Runnable() {
-//                public void run() {
-//                    Toast.makeText(getApplicationContext(), "Inside run" + addresses.size(), Toast.LENGTH_LONG).show();
-//
-//                    if (addresses.size() > 0) {
-//                        Toast.makeText(getApplicationContext(), "Inside IF", Toast.LENGTH_LONG).show();
-//                        textView4.append("Handler: " + addresses.get(0).getCountryName());
-//                        fetchedCountry = false;
-//                    }
-//                }
-//            };
-//            handler.postDelayed(r, 10000);
-//            x.append(" are mere");
-//            Toast.makeText(this, "Outside handler", Toast.LENGTH_LONG).show();
-//        }
-        Call<GlobePosts> call = jsonPlaceholderApi.getFirstPosts(
-                foundCountry,
-                radiusInKm/2,
-                cameraLatitude,
-                cameraLongitude
-        );
-
-        enqueuePostsCall(call, "No posts found in this region!");
+            @Override
+            public void onFailure(Call<ReverseGeocoding> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Failure: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                System.out.println("FAILED: " + t.getMessage());
+            }
+        });
     }
 
     @Override
@@ -364,23 +371,23 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
             }
         });
 
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-
-        LatLng xa = new LatLng(-32, 150);
-        map.addMarker(new MarkerOptions().position(xa).title("Marker in Xa"));
+//        LatLng sydney = new LatLng(-34, 151);
+//        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//
+//        LatLng xa = new LatLng(-32, 150);
+//        map.addMarker(new MarkerOptions().position(xa).title("Marker in Xa"));
 
         LatLng x2;
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        GPSTracker gps = new GPSTracker(this);
-        if(gps.canGetLocation()){
-            x2 = new LatLng(gps.getLatitude(), gps.getLongitude());
-            map.addMarker(new MarkerOptions().position(x2).title("HELLO!!!!"));
-            map.moveCamera(CameraUpdateFactory.newLatLng(x2));
-
-        }else {
-            map.moveCamera(CameraUpdateFactory.newLatLng(xa));
-        }
+//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        GPSTracker gps = new GPSTracker(this);
+//        if(gps.canGetLocation()){
+//            x2 = new LatLng(gps.getLatitude(), gps.getLongitude());
+//            map.addMarker(new MarkerOptions().position(x2).title("HELLO!!!!"));
+//            map.moveCamera(CameraUpdateFactory.newLatLng(x2));
+//
+//        }else {
+//            map.moveCamera(CameraUpdateFactory.newLatLng(xa));
+//        }
     }
 
     @Override
