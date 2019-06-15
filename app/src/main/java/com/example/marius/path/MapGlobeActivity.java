@@ -257,6 +257,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         String latLng = cameraLatitude.toString() + "," + cameraLongitude.toString();
         Call<ReverseGeocoding> call_2 = jsonPlaceholderApi_2.getCountry(
                 latLng,
+                "country",
                 "AIzaSyCOQ_ozH1XcGufyOqRnKjr3IUdU5YMdUl4"
         );
 
@@ -278,12 +279,12 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                 if (res.getStatus().equals("OK")) {
                     System.out.println("res IS: " + res.getPlus_code().get("compound_code"));
                     if (res.getPlus_code().get("compound_code") == null) {
-                        String[] parsedAddress = res.getResults().get(0).getFormatted_address().split(" ");
-                        foundCountry = parsedAddress[parsedAddress.length - 1 ];
+                        String[] parsedAddress = res.getResults().get(0).getFormatted_address().split(",");
+                        foundCountry = parsedAddress[parsedAddress.length - 1].trim();
                         System.out.println("[1] Extracted country: " + "[" + foundCountry + "]");
                     } else {
-                        String[] parsedLocation = res.getPlus_code().get("compound_code").split(" ");
-                        foundCountry = parsedLocation[parsedLocation.length - 1];
+                        String[] parsedLocation = res.getPlus_code().get("compound_code").split(",");
+                        foundCountry = parsedLocation[parsedLocation.length - 1].trim();
                         System.out.println("[2] Extracted country: " + "[" + foundCountry + "]");
                     }
 

@@ -17,7 +17,6 @@
             android:id="@+id/frameLayout"
             android:layout_width="345dp"
             android:layout_height="45dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -52,11 +51,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center"
-                android:background="@null"
                 android:layout_marginRight="5dp"
+                android:background="@null"
                 android:onClick="onClick"
                 android:src="@drawable/ic_clear_gray_36dp"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </FrameLayout>
 
         <ImageButton

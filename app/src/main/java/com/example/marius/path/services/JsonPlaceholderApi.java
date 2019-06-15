@@ -50,6 +50,7 @@ public interface JsonPlaceholderApi {
     @Headers("Content-Type:application/json")
     Call<ReverseGeocoding>getCountry(
             @Query("latlng") String latLong,
+            @Query("result_type") String resultType,
             @Query("key") String apiKey
     );
 

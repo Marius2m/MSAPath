@@ -43,7 +43,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="Path"
-                android:textColor="@color/quantum_white_text"
+                android:textColor="#FFF"
                 android:textSize="28sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/share_toolbar_btn"
