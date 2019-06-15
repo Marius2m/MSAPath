@@ -143,11 +143,9 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
                             if (prevSortLocation == null || searchBar.getText().toString().isEmpty()) {
                                 populatePostsDB();
                                 isLoading = true;
-                                Toast.makeText(getApplicationContext(), "From DB", Toast.LENGTH_SHORT).show();
                             }
                             else {
                                 filterPostsBasedOnString(searchBar.getText().toString(), prevSortLocation);
-                                Toast.makeText(getApplicationContext(), "From CF", Toast.LENGTH_SHORT).show();
                                 isLoading = true;
                             }
                         }
@@ -196,6 +194,7 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<IndividualPost> postsDB = new ArrayList<>();
 
+                String tempOldPostId = oldestPostId;
                 for(DataSnapshot postSnapShot : dataSnapshot.getChildren()){
 
                     oldestPostId = postSnapShot.getKey();
@@ -204,13 +203,17 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
                     indivPost.setType(IndividualPost.PostType.USER_POST);
 
                     postsDB.add(indivPost);
-                    Log.d("ShowPostId", oldestPostId);
                 }
 
-                isLoading = false;
-                postsDB.remove(0);
-                posts.addAll(postsDB);
-                mAdapter.notifyDataSetChanged();
+                if (!tempOldPostId.equals(oldestPostId)) {
+                    isLoading = false;
+                    postsDB.remove(0);
+                    posts.addAll(postsDB);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getApplicationContext(), "All posts have been loaded!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
             @Override
@@ -235,6 +238,7 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.searchBtn: {
                 hideSoftKeyboard();
 
+                if (searchBar.getText().toString().isEmpty()) return;
                 filterPostsBasedOnString(searchBar.getText().toString(), null);
                 System.out.println(searchBar.getText().toString());
                 break;
@@ -282,7 +286,7 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
 
                 String tempPrevSortLocation = postsData.prevSortLocation();
                 if (prevSortLocation != null && prevSortLocation.equals(tempPrevSortLocation)) {
-                    System.out.println("same prevSortLocation");
+                    Toast.makeText(getApplicationContext(), "All posts have been loaded!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (prevSortLocation == null || !prevQueriedString.equals(queryString))
@@ -303,6 +307,7 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onFailure(Call<FilteredPostsBySearch> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Failed to load posts!\nMake sure you a working internet connection.", Toast.LENGTH_SHORT).show();
                 System.out.println("Failed to perform GET");
             }
         });
