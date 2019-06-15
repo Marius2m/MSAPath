@@ -17,14 +17,10 @@ package com.example.marius.path;
  */
 
 
-import android.content.Context;
 import android.graphics.Color;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,34 +31,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marius.path.adapters.GlobePostsAdapter;
-import com.example.marius.path.data_model.CommentC;
 import com.example.marius.path.data_model.GlobePosts;
 import com.example.marius.path.data_model.IndividualPost;
-import com.example.marius.path.data_model.Post;
 import com.example.marius.path.data_model.ReverseGeocoding;
-import com.example.marius.path.data_model.ReverseGeocodingResults;
 import com.example.marius.path.services.JsonPlaceholderApi;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.HttpsCallableResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,7 +57,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
     private MapView mMapView;
-    private TextView textView4;
+    private TextView centerOfScreenIndicator;
     private Button showPathsFromHere;
     GoogleMap mapObj;
     Circle mapCircle;
@@ -114,7 +98,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
 
         mMapView.getMapAsync(this);
 
-        textView4 = findViewById(R.id.textView4);
+        centerOfScreenIndicator = findViewById(R.id.centerOfScreenIndicator);
         showPathsFromHere = findViewById(R.id.showPathsFromHere);
         showPathsFromHere.setOnClickListener(this);
 
@@ -193,7 +177,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                 .radius(radiusInMeters/2)
                 .strokeColor(0xFF303F9F)
                 .fillColor(Color.argb(70, 61, 81,181)));
-//        textView4.setText("KMs: " + Double.toString(radiusInKm/2));
+//        centerOfScreenIndicator.setText("KMs: " + Double.toString(radiusInKm/2));
 
         Double cameraTempLat = mapObj.getCameraPosition().target.latitude;
         Double cameraTempLng = mapObj.getCameraPosition().target.longitude;
@@ -208,7 +192,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
             getFirstPosts();
             coordinatesChanged = true;
 
-//                    textView4.setText(mapObj.getCameraPosition().toString());
+//                    centerOfScreenIndicator.setText(mapObj.getCameraPosition().toString());
         } else {
             Toast.makeText(getApplicationContext(), "This region was already loaded.\nPick a different location on the map!", Toast.LENGTH_SHORT).show();
             coordinatesChanged = false;
@@ -248,7 +232,7 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                 mAdapter.notifyDataSetChanged();
                 isLoading = false;
 
-//                textView4.append("\n@ Loaded posts: " +posts.size()+"\n");
+//                centerOfScreenIndicator.append("\n@ Loaded posts: " +posts.size()+"\n");
             }
 
             @Override
