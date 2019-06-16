@@ -134,8 +134,8 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                 progressBar.setVisibility(View.GONE);
 
                 if(task.isSuccessful()){
-                    Intent intent = getIntent();
-                    setResult(RESULT_OK, intent);
+                    Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    startActivity(intent);
                     finish();
                 }else{
                     Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
