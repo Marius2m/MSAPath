@@ -223,19 +223,21 @@ public class RegisterActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 avatarUri = result.getUri();
+
+                Picasso.get()
+                        .load(avatarUri)
+                        .centerCrop()
+                        .fit()
+                        .transform(new CircleTransform())
+                        .into(avatarPicture);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 System.out.println("ERR: " + error.toString());
             }
         }
-        Picasso.get()
-                .load(avatarUri)
-                .centerCrop()
-                .fit()
-                .transform(new CircleTransform())
-                .into(avatarPicture);
 
-        Log.d("avatarUri:", avatarUri.toString());
+
+//        Log.d("avatarUri:", avatarUri.toString());
     }
 
     private String getFileExtension(Uri uri){
