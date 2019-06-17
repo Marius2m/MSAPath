@@ -159,7 +159,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                 if(dataSnapshot.child("profilePictureUrl").getValue(String.class) != null) {
                     profilePictureUrl = dataSnapshot.child("profilePictureUrl").getValue(String.class);
-                    Log.d("picasso", profilePictureUrl);
                     Picasso.get()
                             .load(dataSnapshot.child("profilePictureUrl").getValue(String.class))
                             .placeholder(home_avatar.getDrawable())
@@ -169,17 +168,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             .into(home_avatar);
                 }
                 if(dataSnapshot.child("posts").getValue() != null) {
-
                     Iterable<DataSnapshot> it = dataSnapshot.child("posts").getChildren();
                     for (DataSnapshot post : it) {
                         postsIds.add(post.getValue().toString());
                         postKeys.put(post.getValue().toString(), post.getKey());
-                        System.out.println("posts.getValue()" + post.getKey());
                     }
 
                     nr_of_paths.setText(String.valueOf(postsIds.size()));
-                    System.out.println("Inside SizeKeys: " + postKeys.size());
-
                     initialPopulation();
                 }
             }
@@ -257,7 +252,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.home_avatar:
-                Toast.makeText(this.getContext(), "Worked", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getContext(), Settings.class);
                 intent.putExtra("name", userName);
                 intent.putExtra("email", email);

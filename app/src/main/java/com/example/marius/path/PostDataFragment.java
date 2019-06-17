@@ -169,15 +169,13 @@ public class PostDataFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if(!paragraphText.getText().toString().isEmpty()){
-                            Log.d("Dialog: text is: ", paragraphText.getText().toString());
-
                             postContents.add(new ParagraphContent(paragraphText.getText().toString()));
                             postContentsAdapter.add(new ParagraphContent(paragraphText.getText().toString()));
                             mAdapter.notifyItemInserted(mAdapter.getItemCount());
 
                             dialog.dismiss();
                         }else{
-                            Toast.makeText(getActivity(), "Empty", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Empty!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -202,8 +200,6 @@ public class PostDataFragment extends Fragment {
                 fab.startAnimation(hideBtn);
 
                 chosePicture();
-
-                Log.d("InsidePicture", "PICTURE");
             }
         });
 
@@ -211,7 +207,6 @@ public class PostDataFragment extends Fragment {
 
             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             userKey = firebaseUser.getUid();
-            Log.d("userKey", userKey);
 
             postKey = mDatabase.child("posts").push().getKey();
             path = "posts/ " + postKey + "/";
@@ -259,9 +254,6 @@ public class PostDataFragment extends Fragment {
         //String coverPhotoStringUri = (String) getArguments().getSerializable("CoverImgUri");
         coverImageUri = Uri.parse((String) getArguments().getSerializable("CoverImgUri"));
 
-        Log.i("getPostData", postData.toString());
-        Log.d("coverImageUri", coverImageUri.toString());
-
         recyclerView = v.findViewById(R.id.test_recyler_view);
         mAdapter = new PostContentsAdapter(postContentsAdapter);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -282,7 +274,6 @@ public class PostDataFragment extends Fragment {
                 picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Log.d("999", uri.toString() + "\n" + "postKey:" + postKey);
                         postData.setCoverImg(uri.toString());
 
                         if (havePictures)
@@ -318,7 +309,6 @@ public class PostDataFragment extends Fragment {
                             public void onSuccess(Uri uri) {
                                 pictureUrls.add(uri.toString());
                                 String x = uri.toString();
-                                Log.d("uploadFileXXX:",x);
                                 if(index < pictureUris.size()){
                                     uploadPictures(pictureUris);
                                 }
@@ -343,7 +333,6 @@ public class PostDataFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("uploadFile:", "crashed inside onFailure");
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 })
@@ -388,7 +377,6 @@ public class PostDataFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("[userKey]", userKey);
                         String key = mDatabase.child("users").child(userKey).child("posts").push().getKey();
                         mDatabase.child("users").child(userKey).child("posts").child(key).setValue(postKey);
                         handler.postDelayed(new Runnable() {
@@ -438,7 +426,6 @@ public class PostDataFragment extends Fragment {
 
             Uri temp = data.getData();
             pictureUris.add(temp);
-            Log.d("mImageUri:", mImageUri.toString());
 
             postContents.add(new ImageContent());
             havePictures = true;

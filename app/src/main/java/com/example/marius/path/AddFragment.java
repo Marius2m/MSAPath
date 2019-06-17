@@ -229,8 +229,6 @@ public class AddFragment extends Fragment {
         postData.setLatitude(Double.parseDouble(latitude));
         postData.setLongitude(Double.parseDouble(longitude));
 
-        Log.d("post to next page", ":D");
-
         Bundle bundleArgs = new Bundle();
         bundleArgs.putSerializable("PostData", postData);
         bundleArgs.putSerializable("CoverImgUri", coverPhotoUri.toString());
@@ -238,16 +236,10 @@ public class AddFragment extends Fragment {
         PostDataFragment postDataFragment = new PostDataFragment();
         postDataFragment.setArguments(bundleArgs);
 
-
         getFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, 0, 0)
                 .replace(R.id.fragment_container, postDataFragment).commit();
-
-//        FragmentTransaction fragmentT = getFragmentManager().beginTransaction();
-//        fragmentT.replace(R.id.fragment_container, postDataFragment).commit();
-
-        //Toast.makeText(getActivity(), postTitle.getText().toString(), Toast.LENGTH_SHORT).show();
     }
 
     private void updateTextDate() {
@@ -283,7 +275,6 @@ public class AddFragment extends Fragment {
 
                 coverPhotoUri = data.getData();
 
-                Log.d("coverPhotoUri:", coverPhotoUri.toString());
                 coverPhotoImgView.setColorFilter(Color.argb(67, 14, 13, 14));
                 Picasso.get()
                         .load(coverPhotoUri)
@@ -297,7 +288,6 @@ public class AddFragment extends Fragment {
             if (resultCode == AutocompleteActivity.RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 String locationData = StringUtil.stringifyAutocompleteWidget(place, true);
-                Log.d("locationData", locationData);
                 setLocationField(locationData);
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
@@ -332,13 +322,10 @@ public class AddFragment extends Fragment {
         if (res.length >= 2) {
             city = res[res.length - 2];
             country = res[res.length - 1];
-            System.out.println("city: " + city);
-            System.out.println("country: " + country);
             postLocation.setText(city + ", " + country);
             postLocation.setError(null);
         } else if (res.length == 1) {
             country = res[res.length - 1];
-            System.out.println("country: " + country);
             postLocation.setText(country);
             postLocation.setError(null);
         }

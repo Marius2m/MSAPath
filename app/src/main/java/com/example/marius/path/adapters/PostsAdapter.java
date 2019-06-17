@@ -35,6 +35,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         CardView cardView;
         ImageView coverImg;
         ImageButton deleteBtn;
+        ImageButton shareBtn;
 
         CustomViewHolder(View view){
             super(view);
@@ -44,6 +45,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             cardView = view.findViewById(R.id.cardPostView);
             coverImg = view.findViewById(R.id.coverImg);
             deleteBtn = view.findViewById(R.id.deleteBtn);
+            shareBtn = view.findViewById(R.id.shareBtnSelf);
         }
     }
 
@@ -51,6 +53,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView location, author, postThumbnailTitle;
         CardView cardView;
         ImageView coverImg;
+        ImageButton shareBtn;
 
         UserPostViewHolder(View view){
             super(view);
@@ -59,6 +62,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             postThumbnailTitle = view.findViewById(R.id.postThumbnailTitle2);
             cardView = view.findViewById(R.id.cardPostView2);
             coverImg = view.findViewById(R.id.coverImg2);
+            shareBtn = view.findViewById(R.id.shareBtnUser);
         }
     }
     public PostsAdapter(List<IndividualPost> posts){
@@ -126,12 +130,21 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             alert.show();
         });
 
+        holder.shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, post.getTitle() + ": \n" + "https://msapath-c1831.firebaseapp.com/posts/" + post.getPostId());
+                context.startActivity(Intent.createChooser(shareIntent, "Share path"));
+            }
+        });
+
         holder.itemView.setOnClickListener(v -> {
             Intent i = new Intent(v.getContext(), SinglePostActivity.class);
             i.putExtra("postObject",(Serializable) post);
             context.startActivity(i);
 
-            Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -152,7 +165,17 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             i.putExtra("postObject",(Serializable) post);
 
             context.startActivity(i);
-            Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
+        });
+
+
+        holder.shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, post.getTitle() + ": \n" + "https://msapath-c1831.firebaseapp.com/posts/" + post.getPostId());
+                context.startActivity(Intent.createChooser(shareIntent, "Share path"));
+            }
         });
     }
 

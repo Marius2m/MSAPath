@@ -56,9 +56,6 @@ public class PostData implements Serializable{
 
     public void printContent(){
         System.out.println(this.toString());
-//        for (PostContent pc: contents) {
-//            System.out.println("id:" + pc.getId() + "content:" + pc.getContent());
-//        }
     }
 
     @Override

@@ -200,7 +200,6 @@ public class RegisterActivity extends AppCompatActivity {
                         uploadAvatar();
                     }else {
                         databaseReference.child("users").child(userId).setValue(userAcc);
-                        Log.d("failTag", "fail" + userAcc.toString());
 
                         Intent intent = getIntent();
                         intent.putExtra("email", email);

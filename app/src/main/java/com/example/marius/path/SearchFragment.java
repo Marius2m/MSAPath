@@ -107,7 +107,6 @@ public class SearchFragment extends Fragment {
             intent.putExtra("postObject",(Serializable) indivPost);
 
             startActivity(intent);
-            Toast.makeText(v.getContext(), indivPost.getPostId(), Toast.LENGTH_SHORT).show();
         });
 
 

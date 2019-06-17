@@ -75,12 +75,8 @@ public class GlobePostsAdapter extends RecyclerView.Adapter<GlobePostsAdapter.Cu
 
         holder.itemView.setOnClickListener(v -> {
             Intent i = new Intent(v.getContext(), SinglePostActivity.class);
-
-            System.out.println("SENDING TO NEW PAGE:" + post.toString());
             i.putExtra("postObject",(Serializable) post);
-
             context.startActivity(i);
-            Toast.makeText(v.getContext(), post.getPostId(), Toast.LENGTH_SHORT).show();
         });
     }
 

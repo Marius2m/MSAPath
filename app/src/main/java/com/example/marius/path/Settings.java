@@ -119,7 +119,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        Log.d("onStart", "IM CALLED");
 
     }
 
@@ -129,15 +128,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-        Log.d("onStop", "IM CALLED");
-
     }
 
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-
-        Log.d("onResume", "IM CALLED");
     }
 
     @Override
@@ -206,12 +201,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 intent.putExtra("title", "DeleteProfile");
                 intent.putExtra("view", R.id.change_name_ll);
                 startActivityForResult(intent, REQUEST_CODE_DELETE_PROFILE_OK);
-                Toast.makeText(this, "Delete Profile", Toast.LENGTH_LONG).show();
                 break;
             }
 
             case R.id.sign_out_btn:
-                Toast.makeText(this, "Sign Out", Toast.LENGTH_LONG).show();
                 mAuth.signOut();
                 finish();
                 break;

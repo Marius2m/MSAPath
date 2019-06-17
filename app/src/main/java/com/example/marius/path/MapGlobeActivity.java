@@ -109,15 +109,11 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-
-
-        if (Geocoder.isPresent()) {
-            System.out.println("isPresent: true");
-        }else {
-            System.out.println("isPresent: false");
-        }
-
-//        populatePostsMockData_1();
+//        if (Geocoder.isPresent()) {
+//            System.out.println("isPresent: true");
+//        }else {
+//            System.out.println("isPresent: false");
+//        }
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -277,15 +273,12 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
                 }
 
                 if (res.getStatus().equals("OK")) {
-                    System.out.println("res IS: " + res.getPlus_code().get("compound_code"));
                     if (res.getPlus_code().get("compound_code") == null) {
                         String[] parsedAddress = res.getResults().get(0).getFormatted_address().split(",");
                         foundCountry = parsedAddress[parsedAddress.length - 1].trim();
-                        System.out.println("[1] Extracted country: " + "[" + foundCountry + "]");
                     } else {
                         String[] parsedLocation = res.getPlus_code().get("compound_code").split(",");
                         foundCountry = parsedLocation[parsedLocation.length - 1].trim();
-                        System.out.println("[2] Extracted country: " + "[" + foundCountry + "]");
                     }
 
                     Call<GlobePosts> callGetFirstPosts = jsonPlaceholderApi.getFirstPosts(
@@ -303,7 +296,6 @@ public class MapGlobeActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onFailure(Call<ReverseGeocoding> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "Failure: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                System.out.println("FAILED: " + t.getMessage());
             }
         });
     }

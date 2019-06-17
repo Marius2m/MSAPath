@@ -129,17 +129,13 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                System.out.println("Entered onScrolled");
                 if (dy > 0) {
-                    System.out.println("Entered dy > 0");
                     visibleItemCount = mLayoutManager.getChildCount();
                     totalItemCount = mLayoutManager.getItemCount();
                     pastVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
                     if (!isLoading) {
-                        System.out.println("Entered !isLoading");
                         if ((visibleItemCount + pastVisibleItem) >= totalItemCount) {
-                            System.out.println("Entered last if");
                             if (prevSortLocation == null || searchBar.getText().toString().isEmpty()) {
                                 populatePostsDB();
                                 isLoading = true;
@@ -256,7 +252,6 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
                     prevQueriedString = "";
                 }
                 clearTextBtn.setVisibility(View.GONE);
-                System.out.println("PREV IS: " + prevSortLocation);
             }
 
             default:
@@ -277,11 +272,9 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
 
                 if(response.code() == 204) {
                     Toast.makeText(AllPostsActivity.this, "No posts found.", Toast.LENGTH_SHORT).show();
-                    System.out.println("No posts");
                     return;
                 }
 
-                System.out.println("Successful call with code: " + response.code());
                 FilteredPostsBySearch postsData = response.body();
 
                 String tempPrevSortLocation = postsData.prevSortLocation();
@@ -297,7 +290,6 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
                 for (IndividualPost post: posts) {
                     post.setType(IndividualPost.PostType.USER_POST);
                 }
-                System.out.println("Current prevPostId: " + postsData.prevSortLocation());
                 prevSortLocation = tempPrevSortLocation;
                 hasFetchedFilteredPosts = true;
 
@@ -308,7 +300,6 @@ public class AllPostsActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onFailure(Call<FilteredPostsBySearch> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "Failed to load posts!\nMake sure you a working internet connection.", Toast.LENGTH_SHORT).show();
-                System.out.println("Failed to perform GET");
             }
         });
     }

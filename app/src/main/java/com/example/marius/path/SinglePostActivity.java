@@ -67,7 +67,6 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         parentRLayout = (RelativeLayout) findViewById(R.id.contentsListRelativeLayout);
         cardView = (CardView) findViewById(R.id.post_row_1);
         currentId = cardView.getId();
-        Log.d("CARDVIEW ID", cardView.getId()+"");
         postThumbnailTitle = (TextView) findViewById(R.id.postThumbnailTitle);
         destination_text = (TextView) findViewById(R.id.destination_text);
         date_text = (TextView) findViewById(R.id.date_text);
@@ -90,10 +89,6 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         postContents = new PostContents();
         postContents.setPostContents(new ArrayList<PostContent>());
         getPostContents();
-
-
-        System.out.println("INSIDE SINGLE POST ACTIVITY " + postData.toString() + "=!!!");
-        Toast.makeText(this.getApplicationContext(), postData.getPostId(), Toast.LENGTH_SHORT).show();
     }
 
     private void getPostContents(){
@@ -113,12 +108,6 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
                         postContents.addPostContent(postContent);
                     }
                 }
-
-//                System.out.println("=================");
-//                for(PostContent content : postContents.getPostContents()){
-//                    System.out.println(content.toString());
-//                }
-//                System.out.println("=================");
                 getUserData();
             }
 
@@ -172,7 +161,6 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT);
-        Log.d("currentd layout:", currentId+"");
         layoutParams.addRule(RelativeLayout.BELOW, currentId);
         layoutParams.setMargins(16,16,16,48);
         constraintLayoutBottomSection.setLayoutParams(layoutParams);
@@ -196,13 +184,11 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         newDynamicTextView.setId(TextView.generateViewId());
 
         currentId = newDynamicTextView.getId();
-        Log.d("SPAcurrentId TXT", ""+currentId);
         newDynamicTextView.setText(text);
 
         newDynamicTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         newDynamicTextView.setPadding(padding * 2, 0, padding * 2, padding * 1);
 
-        Log.d("SPAnewDynamicTxt:", newDynamicTextView.getText().toString());
         return newDynamicTextView;
     }
 
@@ -219,7 +205,6 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
         newDynamicImageView.setId(ImageView.generateViewId());
 
         currentId = newDynamicImageView.getId();
-        Log.d("SPAcurrentId IMG", ""+currentId);
 
         newDynamicImageView.setPadding(padding * 2,0, padding * 2, padding * 1);
         newDynamicImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -238,7 +223,6 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
                 .into(newDynamicImageView);
 
         //pictureUris.add(mImageUri);
-        Log.d("SPAnewDynamicImg:", currentId+"");
 
         return newDynamicImageView;
     }
@@ -272,7 +256,7 @@ public class SinglePostActivity extends AppCompatActivity implements View.OnClic
             case R.id.share_toolbar_btn:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, postThumbnailTitle.getText() + ": \n" + "https://path.com/path=" + postData.getPostId());
+                shareIntent.putExtra(Intent.EXTRA_TEXT, postThumbnailTitle.getText() + ": \n" + "https://msapath-c1831.firebaseapp.com/posts/" + postData.getPostId());
                 startActivity(Intent.createChooser(shareIntent, "Share path"));
                 break;
 
